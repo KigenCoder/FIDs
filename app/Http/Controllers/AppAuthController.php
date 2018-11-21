@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\User;
+use Illuminate\Support\Facades\DB;
 
 class AppAuthController extends Controller{
 
@@ -35,26 +36,41 @@ class AppAuthController extends Controller{
             'password' => 'required|string',
             'remember_me' => 'boolean'
         ]);
+
         $credentials = request(['email', 'password']);
         if(!Auth::attempt($credentials))
             return response()->json([
                 'message' => 'Unauthorized'
             ], 401);
+
         $user = $request->user();
+        //dd($user->id);
         $tokenResult = $user->createToken('Personal Access Token');
         $token = $tokenResult->token;
         
         //Remember token
-        if ($request->remember_me)
+        if($request->remember_me){
             $token->expires_at = Carbon::now()->addWeeks(1);
+        }
+
+
         $token->save();
         return response()->json([
             'access_token' => $tokenResult->accessToken,
             'token_type' => 'Bearer',
-            'expires_at' => Carbon::parse(
-                $tokenResult->token->expires_at
-            )->toDateTimeString()
+            'expires_at' => Carbon::parse($tokenResult->token->expires_at)->toDateTimeString(), 
+            'user_data' => $this->appUserMarkets($user)
         ]);
+    }
+
+    public function appUserMarkets(User $user){
+        $query = "SELECT u.id, u.name, um.market_id, m.market_name ";
+        $query .= "from users u ";
+        $query .= "JOIN user_markets um ON um.user_id = u.id ";
+        $query .= "JOIN markets m ON m.id = um.market_id ";
+        $query .= "WHERE u.id = $user->id";
+       return DB::select(DB::raw($query));
+          
     }
   
     /**
