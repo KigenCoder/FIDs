@@ -12,5 +12,6 @@ Route::group([
     ], function() {
         Route::get('logout', 'AppAuthController@logout');
         Route::get('user', 'AppAuthController@user');
+        Route::post('upload', 'AppAuthController@uploadMarketData');
     });
 });

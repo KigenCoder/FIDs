@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\User;
 use Illuminate\Support\Facades\DB;
+use App\MarketData;
 
 class AppAuthController extends Controller{
 
@@ -64,13 +65,54 @@ class AppAuthController extends Controller{
     }
 
     public function appUserMarkets(User $user){
-        $query = "SELECT u.id, u.name, um.market_id, m.market_name ";
+        $query = "SELECT u.id, u.name, um.market_id, m.market_name, m.system_id as market_type_id ";
         $query .= "from users u ";
         $query .= "JOIN user_markets um ON um.user_id = u.id ";
         $query .= "JOIN markets m ON m.id = um.market_id ";
         $query .= "WHERE u.id = $user->id";
        return DB::select(DB::raw($query));
           
+    }
+
+
+    public function uploadMarketData(Request $request){
+       $input = $request->all();
+       $metaData = $input["metaData"];
+       $marketData = $input["marketData"];
+       $year_name = $metaData["yearName"];
+       $month_id = $metaData["month_id"];
+       $week = $metaData["week"];
+       $market_id = $metaData['marketId'];
+
+       $numberOfRecords = 0;
+       foreach($marketData as $indicator_id => $price){
+           $data = array();
+           $data["year_name"] = $year_name;
+           $data["month_id"] = $month_id;
+           $data["week"] = $week;
+           $data["market_id"] = $market_id;
+           $data["indicator_id"] = $indicator_id;
+           $data["price"] = $price;
+           MarketData::updateOrCreate($data);
+           $numberOfRecords ++;  
+       }
+  
+       if($numberOfRecords > 0){
+        return response()->json([
+            'message' => 'Successfully updated market data!',
+            'numberOfRecords' => $numberOfRecords
+        ], 201);
+       }
+
+    }
+
+    /**
+     * Get the authenticated User
+     *
+     * @return [json] user object
+     */
+    public function user(Request $request){
+        return response()->json($request->user());
     }
   
     /**
@@ -86,13 +128,6 @@ class AppAuthController extends Controller{
         ]);
     }
   
-    /**
-     * Get the authenticated User
-     *
-     * @return [json] user object
-     */
-    public function user(Request $request){
-        return response()->json($request->user());
-    }
+
 
 }
