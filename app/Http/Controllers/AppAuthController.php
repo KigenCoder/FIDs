@@ -93,16 +93,26 @@ class AppAuthController extends Controller{
            $data["market_id"] = $market_id;
            $data["indicator_id"] = $indicator_id;
            $data["price"] = $price;
-           MarketData::updateOrCreate($data);
-           $numberOfRecords ++;  
+
+           if(MarketData::firstOrCreate($data)){
+            $numberOfRecords ++;
+           }
+  
        }
+
+       $message = "";
   
        if($numberOfRecords > 0){
-        return response()->json([
-            'message' => 'Successfully updated market data!',
-            'numberOfRecords' => $numberOfRecords
-        ], 201);
+           $message = "Successfully updated market data!";
+       }else{
+        $message = "No new records added!";
        }
+
+       return response()->json([
+        'message' => $message,
+        'numberOfRecords' => $numberOfRecords
+    ], 
+    201);
 
     }
 
