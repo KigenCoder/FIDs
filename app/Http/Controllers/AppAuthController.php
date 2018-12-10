@@ -94,10 +94,18 @@ class AppAuthController extends Controller{
            $data["indicator_id"] = $indicator_id;
            $data["price"] = $price;
 
-           if(MarketData::firstOrCreate($data)){
-            $numberOfRecords ++;
-           }
-  
+           $existingRecord = MarketData::where("year_name", $year_name)
+           ->where("month_id", $month_id)
+           ->where("week", $week)
+           ->where("market_id", $market_id)
+           ->where("indicator_id", $indicator_id)
+           ->first();
+
+           if(is_null($existingRecord)){
+                 //Record does not exist
+                 MarketData::firstOrCreate($data);
+                 $numberOfRecords ++;
+           }  
        }
 
        $message = "";
