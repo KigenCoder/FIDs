@@ -37,13 +37,25 @@ class AuthController extends Controller
         $email = $input["email"];
         $password = $input["password"];
 
-
         if (Auth::attempt(['email' => $email, 'password' => $password])) {
             // Authentication passed...
-            return redirect("user");
-        } else {
-            return redirect("login");
-        }
+             $user_role_id = Auth::user()->user_role_id;
+
+             switch($user_role_id){
+                   case 1:  //Admin 
+                       return redirect("user");
+                   break;
+                   case 4: //Enumerator
+                   return redirect("data/filter");
+                   break;
+                   default:
+                   return redirect("login");
+                   break;
+
+             }
+             
+ 
+        } 
     }
 
     public function logout() {

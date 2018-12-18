@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class MarketData extends Model{
 
-protected $table = 'market_data_temp';
+protected $table = 'market_data';
 public $timestamps = false;
 protected $fillable = [
     'year_name',

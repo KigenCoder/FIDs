@@ -1,4 +1,4 @@
-@extends('templates.app')
+@extends('templates.admin')
 
 @section('content')
 <div class="row col-md-offset-10">

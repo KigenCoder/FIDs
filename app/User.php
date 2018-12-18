@@ -28,4 +28,15 @@ class User extends Authenticatable{
         }
         return false;
     }
+
+    public function isDataTeam(){
+        $user = Auth::user();
+        if (in_array($user->user_role_id, [1,2,3,4])) {
+            return true;
+        }
+        return false;
+    }
+
+
+    
 }
