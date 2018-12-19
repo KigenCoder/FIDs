@@ -9,7 +9,7 @@ use App\UserRole;
 use App\Http\Requests\UserRequest;
 use App\UserMarket;
 
-class UserManagementController extends Controller {
+class UserAdminController extends Controller {
 public function __construct() {
     $this->middleware("admin");
 }

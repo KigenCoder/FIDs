@@ -4,29 +4,25 @@
 <div class="row col-md-offset-0">
 <h2>{{$marketInfo->market_name }}</h2>
 </div>
-<table class="table table-striped">
+<table class="table table-bordered">
     <thead class="thead-dark">
       <tr>
-        <th scope="col">#</th>
         <th scope="col">Indicator</th>
-        <th scope="col">Year</th>
-        <th scope="col">Month</th>
-        <th scope="col">Week</th>
-        <th scope="col">Price</th>
+        <th scope="col">Week 1</th>
+        <th scope="col">Week 2</th>
+        <th scope="col">Week 3</th>
+        <th scope="col">Week 4</th>
+        <th scope="col">Week 5</th>
       </tr>
     </thead>
     <tbody>
-      @foreach ($marketData as $data)
-
+      @foreach($priceData as $indicator => $data)
       <tr>
-      <th scope="row">{{$data->id}}</th>
-      <td>{{$data->indicator_business_name}}</td>
-      <td>{{$data->year_name}}</td>
-      <td>{{$data->month_id}}</td>
-      <td>{{$data->week}}</td>
-      <td>{{$data->price}}</td>
-      </tr>
-          
+      <td>{{$indicator}}</td>
+      @foreach($data as $week => $price)
+            <td>{{$price}}</td>
+      @endforeach
+      </tr>    
       @endforeach
     </tbody>
   </table>

@@ -5,6 +5,7 @@ use Auth;
 use App\Market;
 use App\UserMarket;
 use App\MarketData;
+use App\Indicator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
@@ -52,17 +53,39 @@ class EnumeratorMarketData extends Controller{
         $enumeratorMarketId = UserMarket::where("user_id",  $enumerator->id)->first()->market_id;
         $marketInfo = Market::where("id", $enumeratorMarketId)->first();
 
+        $indicatorQuery = "SELECT distinct(m.indicator_id), i.indicator_business_name FROM market_data m ";
+        $indicatorQuery .= "JOIN indicators i ON i.id = m.indicator_id ";
+        $indicatorQuery .= " WHERE m.market_id = $enumeratorMarketId AND m.year_name = $year_name AND m.month_id = $month_id ";
+        $indicators = DB::select(DB::raw($indicatorQuery));
+        $marketData = array();
        
-        //Market data
-        $marketData = MarketData::join("indicators", "indicators.id", "=", "market_data.indicator_id")
-        ->where("year_name", $year_name)
-        ->where("month_id", $month_id)
-        ->where("market_id", $enumeratorMarketId)
-        ->get(["market_data.*", "indicators.indicator_business_name"]);
-       
+        foreach($indicators as $indicator){
+            $indicatorId = $indicator->indicator_id;
+            $indicator_business_name = $indicator->indicator_business_name;
+                     $indicatorData = MarketData::where("year_name", $year_name)
+                     ->where('month_id', $month_id)
+                     ->where('indicator_id', $indicatorId) 
+                     ->where('market_id', $enumeratorMarketId)
+                     ->get(["week", "price"]);
+                     $marketData[$indicator_business_name] = $indicatorData;
+                     }
+
+                     $priceData = array();
+
+                     //Prep Market data
+                     foreach($marketData as $indicator => $data){
+                        
+                        $temp = array();
+                              for($i=0; $i<count($data); $i++){
+                                  $currentData = $data[$i];
+                                $temp[$currentData->week]= $currentData->price;
+                              }
+                              $priceData[$indicator] = $temp;
+                     }
         $displayData["marketInfo"] = $marketInfo;
-        $displayData["marketData"] = $marketData;
-               
+        $displayData["priceData"] = $priceData;  
+        
+
         return view('enumerators.data.display', $displayData);
 
     }

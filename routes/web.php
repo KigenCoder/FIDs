@@ -2,7 +2,7 @@
 
 Route::get('/', 'AuthController@index');
 Route::resource("login", "AuthController");
-Route::resource("user", "UserManagementController");
+Route::resource("user", "UserAdminController");
 Route::resource("user.markets", "UserMarkets");
 Route::group([
     'prefix' => 'data'
