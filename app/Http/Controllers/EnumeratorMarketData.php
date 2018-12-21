@@ -66,6 +66,7 @@ class EnumeratorMarketData extends Controller{
                      ->where('month_id', $month_id)
                      ->where('indicator_id', $indicatorId) 
                      ->where('market_id', $enumeratorMarketId)
+                     ->where('price', '>', 999)
                      ->get(["week", "price"]);
                      $marketData[$indicator_business_name] = $indicatorData;
                      }

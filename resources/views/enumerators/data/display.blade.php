@@ -17,11 +17,45 @@
     </thead>
     <tbody>
       @foreach($priceData as $indicator => $data)
+    
+          
+      
       <tr>
       <td>{{$indicator}}</td>
+      @php
+            $weekOnePrice = "";
+            $weekTwoPrice = "";
+            $weekThreePrice = "";
+            $weekFourPrice = "";
+            $weekFivePrice = "";
+        @endphp
       @foreach($data as $week => $price)
-            <td>{{$price}}</td>
+              @php
+                  switch($week){
+                      case 1:
+                          $weekOnePrice = $price;
+                      break;
+                      case 2:
+                          $weekTwoPrice = $price;
+                      break;
+                      case 3:
+                          $weekThreePrice = $price;
+                      break;
+                      case 4:
+                          $weekFourPrice = $price;
+                      break;
+                      case 5:
+                          $weekFivePrice = $price;
+                      break;     
+                  }      
+              @endphp
       @endforeach
+
+      <td>{{$weekOnePrice}}</td>
+      <td>{{$weekTwoPrice}}</td>
+      <td>{{$weekThreePrice}}</td>
+      <td>{{$weekFourPrice}}</td>
+      <td>{{$weekFivePrice}}</td>
       </tr>    
       @endforeach
     </tbody>
