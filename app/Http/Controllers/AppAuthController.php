@@ -124,7 +124,7 @@ class AppAuthController extends Controller
                 $numberOfRecords++;
             }
         }
-        
+
         $message = NULL;
         if ($numberOfRecords > 0) {
             $message = "Successfully updated market data!";
