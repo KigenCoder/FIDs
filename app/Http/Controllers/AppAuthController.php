@@ -31,8 +31,7 @@ class AppAuthController extends Controller
         ], 201);
     }
 
-    public function login(Request $request)
-    {
+    public function login(Request $request){
         $request->validate([
             'email' => 'required|string|email',
             'password' => 'required|string',
@@ -80,6 +79,8 @@ class AppAuthController extends Controller
     public function uploadMarketData(Request $request)
     {
         $input = $request->all();
+
+        return json_encode( $input);
         $metaData = $input["metaData"];
         $marketData = $input["marketData"];
         $year_name = $metaData["yearName"];
