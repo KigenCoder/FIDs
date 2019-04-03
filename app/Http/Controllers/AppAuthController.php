@@ -79,8 +79,6 @@ class AppAuthController extends Controller
     public function uploadMarketData(Request $request)
     {
         $input = $request->all();
-
-        return json_encode( $input);
         $metaData = $input["metaData"];
         $marketData = $input["marketData"];
         $year_name = $metaData["yearName"];
@@ -97,7 +95,6 @@ class AppAuthController extends Controller
             $data["market_id"] = $market_id;
             $data["indicator_id"] = $indicator_id;
             $data["price"] = $price;
-
             $civilSecurityID = "53";
             $existingRecord = NULL;
 
