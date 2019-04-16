@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-@include('templates.header')
+    @include('templates.header')
 </head>
 
 <body>
 <div class="container">
     <div class="masthead" style="text-align: right">
-        <h3 class="text-muted" style="right: 5%;  ">Fids App Admin</h3>
+        <h3 class="text-muted" style="right: 5%;  ">FIDS ADMIN</h3>
 
     </div>
-    <div id='cssmenu' >
+    <div id='cssmenu'>
         <ul>
-                <li class='has-sub'><a href='#'><span>User Module</span></a>
-                    <ul>
-                        <li class='has-sub'><span>{!! Html::link('user','Users') !!}</span></li>
-                        <li class='has-sub'><span>{!! Html::link('user/create','New Users') !!}</span></li>
-                    </ul>
-                </li>
-              
+            <li class='has-sub'><a href='#'><span>User Module</span></a>
+                <ul>
+                    <li class='has-sub'><span>{!! Html::link('user','Users') !!}</span></li>
+                    <li class='has-sub'><span>{!! Html::link('user/create','New Users') !!}</span></li>
+                </ul>
+            </li>
+
             <li class='last'>{!! Html::link('logout','Logout') !!}</li>
         </ul>
     </div>
@@ -31,8 +31,10 @@
         </div>
     </div>
 
-<div>
-@include('templates.footer')
+    <div>
+        @include('templates.footer')
+    </div>
+</div>
 </body>
 
 </html>

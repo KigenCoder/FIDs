@@ -1,9 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
-Route::group([
-    'prefix' => 'auth'
-], function () {
+Route::group(['prefix' => 'auth'], function ()
+{
     Route::post('login', 'AppAuthController@login');
     Route::post('signup', 'AppAuthController@signup');
   
@@ -15,3 +13,9 @@ Route::group([
         Route::post('upload', 'AppAuthController@uploadMarketData');
     });
 });
+
+Route::get('indicators', 'APIController@indicators');
+Route::get('zones', 'APIController@zones');
+Route::get('regions', 'APIController@regions');
+Route::get('years', 'APIController@years');
+Route::get('markets', 'APIController@markets');

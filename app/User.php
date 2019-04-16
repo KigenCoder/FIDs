@@ -29,9 +29,18 @@ class User extends Authenticatable{
         return false;
     }
 
-    public function isDataTeam(){
+    public function isDataAnalyst(){
         $user = Auth::user();
-        if (in_array($user->user_role_id, [1,2,3,4])) {
+        if (in_array($user->user_role_id, [2,3])) {
+
+            return true;
+        }
+        return false;
+    }
+
+    public function isEnumerator(){
+        $user = Auth::user();
+        if ($user->user_role_id == 4) {
             return true;
         }
         return false;
