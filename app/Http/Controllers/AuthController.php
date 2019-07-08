@@ -43,7 +43,7 @@ class AuthController extends Controller
             // Authentication passed...
             $user_role_id = Auth::user()->user_role_id;
 
-
+            //dd($user_role_id);
             switch ($user_role_id) {
                 case 1:  //Admin
                     return redirect("user");

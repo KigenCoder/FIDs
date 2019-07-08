@@ -37,12 +37,18 @@
 </div>
 
 
-<div class="tile is-parent is-vertical">
+<div class="tile is-ancestor is-vertical">
     <div class="container">
-        @yield('content')
+        <div class="top-padding">
+            @yield('content')
+        </div>
+
     </div>
     <div class="container">
-        @include('templates.footer')
+        <div class="top-padding">
+            @include('templates.footer')
+        </div>
+
     </div>
 
 </div>

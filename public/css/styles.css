@@ -1,0 +1,58 @@
+
+.scroll-y {
+    overflow-y: auto;
+    height: 100px;
+}
+
+.scroll-x {
+    overflow-x: auto;
+    width: auto;
+}
+
+.align-center {
+    align-content: center;
+}
+
+.select-width {
+    width: 100px !important;
+}
+
+.top-padding {
+    padding-top: 20px;
+}
+
+.filters-panel {
+    height: 100px;
+}
+
+.table.table-font {
+    font-size: small;
+}
+
+.side-margin {
+    margin-left: 5px;
+}
+
+.display-empty {
+    empty-cells: show;
+}
+
+.table .is-scrollable .tbody {
+    overflow-y: scroll;
+    width: auto;
+    position: absolute;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

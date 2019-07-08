@@ -14,8 +14,14 @@ Route::group(['prefix' => 'auth'], function ()
     });
 });
 
-Route::get('indicators', 'APIController@indicators');
 Route::get('zones', 'APIController@zones');
-Route::get('regions', 'APIController@regions');
+Route::post('regions', 'APIController@regions');
 Route::get('years', 'APIController@years');
-Route::get('markets', 'APIController@markets');
+Route::post('markets', 'APIController@markets');
+Route::post('indicators', 'APIController@indicators');
+Route::post('analysis_data', 'APIController@analysis_data');
+Route::post('meta_data', 'APIController@marketMetaData');
+
+Route::get("scratch-pad", "ScratchPadController@index");
+
+//Route::get('test', 'APIController@sixMonthsDiff');
