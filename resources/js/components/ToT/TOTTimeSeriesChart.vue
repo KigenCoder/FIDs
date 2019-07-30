@@ -1,26 +1,14 @@
 <template>
 
-  <div class="modal modal-full-screen modal-fx-fadeInScale" :class="isActive" id="modal-fadeInScale-fs">
-    <div class="modal-content modal-card">
-      <header class="modal-card-head">
-        <p class="modal-card-title">{{getIndicatorName}}</p>
-        <button v-on:click="closeModal" class="modal-button-close delete" aria-label="close"></button>
-      </header>
-      <section class="modal-card-body">
+  <div class="tile is-child" v-if="showChart">
+    <apexchart
+        width="90%"
+        height="80%"
+        type="line"
+        :options="options"
+        :series="series">
 
-        <apexchart
-            width="90%"
-            height="80%"
-            type="line"
-            :options="options"
-            :series="series">
-
-        </apexchart>
-      </section>
-      <footer class="modal-card-foot">
-        <button v-on:click="closeModal" class="modal-button-close button">Cancel</button>
-      </footer>
-    </div>
+    </apexchart>
   </div>
 </template>
 
@@ -28,16 +16,15 @@
 
   import {mapGetters} from 'vuex'
 
-
-
   export default {
+
     data() {
       return {
-        isActive: '',
+        showChart: false,
         series: [],
         options: {
           chart: {
-            id: 'Market prices series',
+            id: 'TOT Market prices series',
             width: "90%",
             height: "80%",
             type: "line",
@@ -55,7 +42,6 @@
             width: 2,
             dashArray: 0,
           },
-
 
           markers: {
             size: 10,
@@ -78,10 +64,7 @@
           xaxis: {
             categories: this.months(),
           },
-
         },
-
-
       }
     },
 
@@ -94,12 +77,10 @@
     mounted() {
       this.$store.subscribe((mutation, state) => {
         switch (mutation.type) {
-          case 'monthly_analysis/showChartDataMutation':
-            if (state.monthly_analysis.show_chart_data) {
+          case 'monthly_analysis/showToTChartDataMutation':
+            if (state.monthly_analysis.show_tot_chart_data) {
               this.series = [] // Reset series items
-              let chartDataItems = state.monthly_analysis.chart_data
-
-              //console.log(chartDataItems)
+              let chartDataItems = state.monthly_analysis.tot_chart_data
 
               //For each year create a chart line object
               for (let i = 0; i < chartDataItems.length; i++) {
@@ -117,10 +98,9 @@
                   data: dataItems,
                 }
                 this.series.push(seriesItem)
-
               }
-              this.isActive = 'is-active'
-              this.$store.commit('monthly_analysis/showChartDataMutation', null)
+              this.showChart = true
+              this.$store.commit('monthly_analysis/showToTChartDataMutation', null)
               break;
             }
         }

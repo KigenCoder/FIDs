@@ -60,7 +60,9 @@
       ...mapState('monthly_analysis', [
         'years'
       ]),
-      ...mapGetters(['getMarketId', 'getIndicatorId']),
+      ...mapGetters([
+        'getIndicatorId'
+      ]),
 
     },
 
@@ -77,30 +79,30 @@
         //Check to see if start year is more than end year
         if (this.selectedStartPeriod <= this.selectedEndPeriod) {
 
-          this.$store.commit('monthly_analysis/startYearMutation', startYear)
-          this.$store.commit('monthly_analysis/endYearMutation', endYear)
+          this.$store.commit('monthly_analysis/totStartYearMutation', startYear)
+          this.$store.commit('monthly_analysis/totEndYearMutation', endYear)
 
           //Get marketID and IndicatorID from store
-          let marketIds = this.$store.getters['monthly_analysis/getMarketIds']
-          let indicatorId = this.$store.getters['monthly_analysis/getIndicatorId']
+          let marketIds = this.$store.getters['monthly_analysis/getTotMarketIds']
+          let firstIndicatorId = this.$store.getters['monthly_analysis/getToTFirstIndicator']
+          let secondIndicatorId = this.$store.getters['monthly_analysis/getToTSecondIndicator']
 
 
-          if (indicatorId && marketIds) {
+          if (firstIndicatorId && secondIndicatorId && marketIds) {
             // Indicator and Market good to go - Fetch data for given period e.g 2015 - 2019
-            this.$store.dispatch('monthly_analysis/loadData')
-            this.$store.dispatch('monthly_analysis/loadMetaData')
+            this.$store.dispatch('monthly_analysis/loadToTData')
+            this.$store.dispatch('monthly_analysis/loadToTMetaData')
 
           } else {
-            alert("Please select Market(s) and Indicator.")
+            alert("Please select Market(s) and Indicator(S).")
           }
-
 
         } else if (startYear && endYear) {
           alert("Check end and start period")
         }
 
-      }
-      ,
+
+      },
     }
   }
 </script>

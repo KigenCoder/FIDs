@@ -29,10 +29,18 @@
 
     mounted() {
       this.$store.subscribe((mutation, state) => {
-
+       //Monthly analysis
         if (mutation.type === 'monthly_analysis/metaDataMutation') {
           if (state.monthly_analysis['meta_data']) {
             this.data_items = state.monthly_analysis['meta_data'].percentage_of_average
+
+          }
+        }
+
+        //ToT Analysis
+        if (mutation.type === 'monthly_analysis/totMetaDataMutation') {
+          if (state.monthly_analysis['tot_meta_data']) {
+            this.data_items = state.monthly_analysis['tot_meta_data'].percentage_of_average
 
           }
         }

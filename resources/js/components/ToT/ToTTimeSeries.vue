@@ -43,8 +43,8 @@
     mounted() {
       this.$store.subscribe((mutation, state) => {
         switch (mutation.type) {
-          case 'monthly_analysis/analysisDataMutation':
-            let analysisData = state.monthly_analysis.analysis_data
+          case 'monthly_analysis/totAnalysisDataMutation':
+            let analysisData = state.monthly_analysis.tot_data
             if (analysisData.length > 0) {
               this.seriesReady = true
               this.years = [] // Reset years array
@@ -65,11 +65,8 @@
 
     methods: {
       selectSeries() {
-
-        let analysisData = this.$store.getters['monthly_analysis/getAnalysisData']
-
+        let analysisData = this.$store.getters['monthly_analysis/getToTAnalysisData']
         let chartData = []
-
         if (this.selected.length > 0 && analysisData.length > 0) {
           for (let i = 0; i < this.selected.length; i++) {
             let currentYear = this.selected[i];
@@ -81,20 +78,22 @@
               }
             }
           }
+
+
           //Commit it to the store
-          this.$store.commit('monthly_analysis/chartDataMutation', chartData)
+          this.$store.commit('monthly_analysis/totChartDataMutation', chartData)
 
         }
 
       },
 
       showChartData() {
-        let chartData = this.$store.getters['monthly_analysis/getChartData']
-        //console.log(chartData);
+        let chartData = this.$store.getters['monthly_analysis/getToTChartData']
+        console.log(chartData);
 
         if (this.selected.length > 0 && chartData.length > 0) {
           //Display chart data
-          this.$store.commit('monthly_analysis/showChartDataMutation', 1)
+          this.$store.commit('monthly_analysis/showToTChartDataMutation', 1)
 
         }
 

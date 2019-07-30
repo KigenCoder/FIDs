@@ -33,8 +33,6 @@
     },
     methods: {
       indicatorSelected() {
-        //Get indicator name
-
         //Reset current data
         this.$store.commit('monthly_analysis/analysisDataMutation', [])
         this.$store.commit('monthly_analysis/metaDataMutation', [])
@@ -45,6 +43,7 @@
           let indicator = this.indicators[i]
 
           if (indicator.id == this.selectedIndicator) {
+            //Get indicator name
             this.$store.commit('monthly_analysis/indicatorNameMutation', indicator.indicator_business_name)
           }
         }
@@ -52,12 +51,12 @@
 
         //Set current indicator
         this.$store.commit('monthly_analysis/indicatorIdMutation', this.selectedIndicator)
-
-
         let startYear = this.$store.getters['monthly_analysis/getStartYear']
         let endYear = this.$store.getters['monthly_analysis/getEndYear']
+        let market_ids = this.$store.getters['monthly_analysis/getMarketIds']
 
-        if (startYear && endYear) {
+
+        if (startYear && endYear && market_ids.length > 0) {
           //load data if indicator, start and end year determined
           this.$store.dispatch('monthly_analysis/loadData')
           this.$store.dispatch('monthly_analysis/loadMetaData')

@@ -83,26 +83,29 @@
           //Update markets store Ids
           let marketIds = this.marketIds.toString()
 
+          //console.log(marketIds)
+
 
           //Commit market Ids mutation
-          this.$store.commit('monthly_analysis/marketIdsMutation', marketIds)
+          this.$store.commit('monthly_analysis/totMarketIdsMutation', marketIds)
 
           //If Indicator, start & end year are set get data
-          let startYear = this.$store.getters['monthly_analysis/getStartYear']
-          let endYear = this.$store.getters['monthly_analysis/getEndYear']
-          let indicatorId = this.$store.getters['monthly_analysis/getIndicatorId']
+          let startYear = this.$store.getters['monthly_analysis/getToTStartYear']
+          let endYear = this.$store.getters['monthly_analysis/getToTEndYear']
+          let firstIndicatorId = this.$store.getters['monthly_analysis/getToTFirstIndicator']
+          let secondIndicatorId = this.$store.getters['monthly_analysis/getToTSecondIndicator']
 
-          if (startYear && endYear && indicatorId) {
+          if (startYear && endYear && firstIndicatorId && secondIndicatorId) {
             //load data if indicator, start and end year determined
-            this.$store.dispatch('monthly_analysis/loadData')
-            this.$store.dispatch('monthly_analysis/loadMetaData')
+            this.$store.dispatch('monthly_analysis/loadToTData')
+            this.$store.dispatch('monthly_analysis/loadToTMetaData')
           }
 
         } else {
-          //Reset it
-          this.$store.commit('monthly_analysis/marketIdsMutation', null)
-          this.$store.commit('monthly_analysis/analysisDataMutation', [])
-          this.$store.commit('monthly_analysis/metaDataMutation', [])
+          //Reset stuff
+          this.$store.commit('monthly_analysis/totMarketIdsMutation', null)
+          this.$store.commit('monthly_analysis/totAnalysisDataMutation', [])
+          this.$store.commit('monthly_analysis/totMetaDataMutation', [])
         }
       },
 

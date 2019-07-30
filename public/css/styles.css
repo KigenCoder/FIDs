@@ -4,6 +4,16 @@
     height: 100px;
 }
 
+.box-scroll{
+    overflow-y: auto;
+    height: 100px;
+    margin-top: 10px;
+}
+
+.box-top-margin{
+    margin-top: 10px;
+}
+
 .scroll-x {
     overflow-x: auto;
     width: auto;

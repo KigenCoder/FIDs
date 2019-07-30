@@ -5,12 +5,10 @@ namespace App\Http\Controllers;
 use App\Classes\AnalysisData;
 use App\Classes\MonthlyData;
 use App\Market;
-use App\MarketData;
 use DB;
 use App\Region;
 use App\Zone;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 
 
 class APIController extends Controller
@@ -44,11 +42,13 @@ class APIController extends Controller
   public function markets(Request $request)
   {
     $markets = NULL;
-    if ($request->has('region_id')) {
+    if ($request->has('region_id') && $request->has('system_id')) {
       $region_id = $request->all()['region_id'];
+      $system_id = $request->all()['system_id'];
       $query = "SELECT m.* FROM markets m ";
       $query .= "JOIN district d ON d.id = m.district_id ";
-      $query .= "WHERE d.region_id = $region_id";
+      $query .= "WHERE d.region_id = $region_id ";
+      $query .= "AND m.system_id = $system_id ";
       $markets = DB::select(DB::raw($query));
     }
 
@@ -61,11 +61,8 @@ class APIController extends Controller
     $query = "SELECT * FROM indicators i ";
     $where_clause = "";
 
-    if ($request->has('market_id')) {
-      $market_id = $request->all()['market_id'];
-      $market = Market::where('id', $market_id)->first();
-      $system_id = $market->system_id;
-
+    if ($request->has('system_id')) {
+      $system_id = $request->all()['system_id'];
 
       //SLIMS = 2 Main Markets = 1
       switch ($system_id) {
@@ -90,99 +87,112 @@ class APIController extends Controller
 
   public function analysis_data(Request $request)
   {
-    if ($request->has('market_id') && $request->has('indicator_id')
+    if ($request->has('market_ids') && $request->has('indicator_id')
       && $request->has('start_year') && $request->has('end_year')) {
+
       $input = $request->all();
-      $market_id = $input['market_id'];
+      $market_ids = $input['market_ids'];
       $indicator_id = $input['indicator_id'];
       $start_year = $input['start_year'];
       $end_year = $input['end_year'];
+      $data = $this->getData($market_ids, $indicator_id, $start_year, $end_year);
 
-      $diff = $end_year - $start_year;
-      $index = 0;
-      $data = array();
-
-      while ($index <= $diff) {
-        $year = $start_year + $index;
-        $query = "SELECT ROUND(AVG(price),0) as price, month_id ";
-        $query .= "FROM market_data m ";
-        $query .= "WHERE m.year_name = $year ";
-        $query .= "AND m.market_id = $market_id ";
-        $query .= "AND m.indicator_id = $indicator_id ";
-        $query .= "GROUP by m.month_id ";
-        $temp = DB::select(DB::raw($query));
-
-        $month_ids = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-        $distinct_months_query = "SELECT DISTINCT(month_id) ";
-        $distinct_months_query .= "FROM market_data m ";
-        $distinct_months_query .= "WHERE m.year_name = $year. ";
-        $distinct_months_query .= "AND m.indicator_id = $indicator_id ";
-        $distinct_months_query .= "AND m.market_id = $market_id ";
-        $distinct_months = DB::select(DB::raw($distinct_months_query));
-        $distinct_month_ids = array();
-
-        for ($i = 0; $i < count($distinct_months); $i++) {
-          $distinct_month_ids[] = $distinct_months[$i]->month_id;
-        }
-
-        $yearData = array();
-        $missing_months = array_diff($month_ids, $distinct_month_ids);
-
-
-        /*For purposes of Front end rendering on vue.js/Javascript
-        Months without data will be populated with default MonthlyData
-        instances
-
-        */
-        for ($i = 0; $i < count($month_ids); $i++) {
-          $currentMonthID = $month_ids[$i];
-          if (in_array($currentMonthID, $missing_months)) {
-            //Create empty object and place in array
-            $monthlyData = new MonthlyData("$currentMonthID", " ");
-            $yearData[] = $monthlyData;
-          } else {
-            //Get data
-            for ($k = 0; $k < count($temp); $k++) {
-              if ($temp[$k]->month_id == $currentMonthID)
-                $yearData[] = $temp[$k];
-            }
-          }
-        }
-
-        $analysisData = new AnalysisData($year, $yearData);
-
-        //return $analysisData->getYear();
-        $data[] = $analysisData;
-        $index++;
-      }
       return json_encode($data);
     }
 
   }
 
-  function marketMetaData(Request $request)
-  {
+  public function getData($market_ids, $indicator_id, $start_year, $end_year){
+    $diff = $end_year - $start_year;
+    $index = 0;
+    $data = array();
+
+    while ($index <= $diff) {
+      $year = $start_year + $index;
+      $query = "SELECT ROUND(AVG(price),0) as price, month_id ";
+      $query .= "FROM market_data m ";
+      $query .= "WHERE m.year_name = $year ";
+      $query .= "AND m.market_id IN ($market_ids ) ";
+      $query .= "AND m.indicator_id = $indicator_id ";
+      $query .= "GROUP by m.month_id ";
+
+      $temp = DB::select(DB::raw($query));
+
+      $month_ids = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+      $distinct_months_query = "SELECT DISTINCT(month_id) ";
+      $distinct_months_query .= "FROM market_data m ";
+      $distinct_months_query .= "WHERE m.year_name = $year. ";
+      $distinct_months_query .= "AND m.indicator_id = $indicator_id ";
+      $distinct_months_query .= "AND m.market_id IN ($market_ids ) ";
+      $distinct_months = DB::select(DB::raw($distinct_months_query));
+      $distinct_month_ids = array();
+
+      for ($i = 0; $i < count($distinct_months); $i++) {
+        $distinct_month_ids[] = $distinct_months[$i]->month_id;
+      }
+
+      $yearData = array();
+      $missing_months = array_diff($month_ids, $distinct_month_ids);
+
+
+      /*For purposes of Front end rendering on vue.js/Javascript
+      Months without data will be populated with default MonthlyData
+      instances
+
+      */
+      for ($i = 0; $i < count($month_ids); $i++) {
+        $currentMonthID = $month_ids[$i];
+        if (in_array($currentMonthID, $missing_months)) {
+          //Create empty object and place in array
+          $monthlyData = new MonthlyData("$currentMonthID", "");
+          $yearData[] = $monthlyData;
+        } else {
+          //Get data
+          for ($k = 0; $k < count($temp); $k++) {
+            if ($temp[$k]->month_id == $currentMonthID)
+              $yearData[] = new MonthlyData($temp[$k]->month_id, $temp[$k]->price);
+          }
+        }
+      }
+
+      $analysisData = new AnalysisData($year, $yearData);
+
+      //return $analysisData->getYear();
+      $data[] = $analysisData;
+      $index++;
+    }
+
+    return $data;
+
+  }
+
+  function marketMetaData(Request $request){
     $metaData = array();
-    if ($request->has('year') && $request->has('indicator_id')
-      && $request->has('market_id')) {
+    if ($request->has('start_year') && $request->has('end_year')
+      && $request->has('indicator_id') && $request->has('market_ids')) {
       $input = $request->all();
-      $thisYear = $input['year'];
+      $endYear = $input['end_year'];
       $indicator_id = $input['indicator_id'];
-      $market_id = $input['market_id'];
-      $metaData['averages'] = $this->ltm($thisYear, $indicator_id, $market_id);
-      $metaData['preceding_months'] = $this->precedingMonths($thisYear, $indicator_id, $market_id);
-      $metaData["same_months"] = $this->sameMonthComparison($thisYear, $indicator_id, $market_id);
-      $metaData["percentage_of_average"] = $this->percentageOfLTM($thisYear, $indicator_id, $market_id);
-      $metaData["twelve_months_min_max"] = $this->twelveMonthMinMax($thisYear, $indicator_id, $market_id);
-      $metaData['six_months_min_max'] = $this->sixMonthMaxMin($thisYear, $indicator_id, $market_id);
-      $metaData['six_months_diff'] = $this->sixMonthsDiff($thisYear, $indicator_id, $market_id);
+      $market_ids = $input['market_ids'];
+      $metaData['averages'] = $this->ltm($endYear, $indicator_id, $market_ids);
+      $metaData['preceding_months'] = $this->precedingMonths($endYear, $indicator_id, $market_ids);
+      $metaData["same_months"] = $this->sameMonthComparison($endYear, $indicator_id, $market_ids);
+      $metaData["percentage_of_average"] = $this->percentageOfLTM($endYear, $indicator_id, $market_ids);
+      $metaData["twelve_months_min_max"] = $this->twelveMonthMinMax($endYear, $indicator_id, $market_ids);
+      $metaData['six_months_min_max'] = $this->sixMonthMaxMin($endYear, $indicator_id, $market_ids);
+      $metaData['six_months_diff'] = $this->sixMonthsDiff($endYear, $indicator_id, $market_ids);
     }
     return $metaData;
   }
 
+  function custom_ltm()
+  {
+
+  }
+
 
   //Long Term Mean
-  function ltm($currentYear, $indicator_id, $market_id)
+  function ltm($endYear, $indicator_id, $market_ids)
   {
     $numberOfYears = 5;
     $averages = array();
@@ -190,12 +200,12 @@ class APIController extends Controller
     for ($month_id = 1; $month_id <= 12; $month_id++) {
       $prices = array();
       for ($i = 1; $i <= $numberOfYears; $i++) {
-        $year = $currentYear - $i;
+        $year = $endYear - $i;
         $query = "SELECT AVG(m.price) as average ";
         $query .= "FROM market_data m ";
         $query .= "WHERE m.indicator_id = $indicator_id ";
         $query .= "AND m.month_id = $month_id ";
-        $query .= "AND m.market_id = $market_id ";
+        $query .= "AND m.market_id IN ($market_ids ) ";
         $query .= "AND m.year_name = $year ";
         $priceData = DB::select(DB::raw($query));
 
@@ -214,20 +224,20 @@ class APIController extends Controller
   }
 
   //Preceding month %
-  function precedingMonths($year, $indicator_id, $market_id)
+  function precedingMonths($endYear, $indicator_id, $market_ids)
   {
-    $this_year_months = $this->distinctMonthIds($year, $indicator_id, $market_id);
+    $this_year_months = $this->distinctMonthIds($endYear, $indicator_id, $market_ids);
     $monthlyData = [];
     $comparisons = [];
 
     foreach ($this_year_months as $month_id) {
       $currentMonthId = $month_id->month_id;
       $query = "SELECT AVG(m.price) as price FROM market_data m ";
-      $query .= "WHERE m.market_id = $market_id  ";
+      $query .= "WHERE m.market_id IN ($market_ids) ";
       $query .= "AND m.indicator_id = $indicator_id ";
       if ($currentMonthId == 1) {
         //Fetch last year, last month data
-        $last_year = $year - 1;
+        $last_year = $endYear - 1;
         $dec_id = 12;
         $last_years_query = $query;
         $last_years_query .= "AND m.month_id = 12 ";
@@ -237,7 +247,7 @@ class APIController extends Controller
       }
       //This years data
       $query .= "AND m.month_id = $currentMonthId ";
-      $query .= "AND m.year_name = $year ";
+      $query .= "AND m.year_name = $endYear ";
       $this_year_result = DB::select(DB::raw($query));
       $priceData = $this_year_result[0];
       array_push($monthlyData, array(
@@ -252,9 +262,9 @@ class APIController extends Controller
       } else {
         $prevMonthData = $monthlyData[$i - 1];
         $currentMonthData = $monthlyData[$i];
-        $compared = round(($currentMonthData['price'] / $prevMonthData['price']) * 100);
+        $compared = ($currentMonthData['price'] / $prevMonthData['price']) * 100;
 
-        $comparisons[] = new MonthlyData($currentMonthData['month_id'], $compared);
+        $comparisons[] = new MonthlyData($currentMonthData['month_id'], round($compared));
       }
 
     }
@@ -266,14 +276,14 @@ class APIController extends Controller
     return $comparisons;
   }
 
-  function sameMonthComparison($thisYear, $indicator_id, $market_id)
+  function sameMonthComparison($endYear, $indicator_id, $market_id)
   {
-    $month_ids = $this->distinctMonthIds($thisYear, $indicator_id, $market_id);
-    $lastYear = $thisYear - 1;
+    $month_ids = $this->distinctMonthIds($endYear, $indicator_id, $market_id);
+    $lastYear = $endYear - 1;
     $comparisons = array();
 
     $baseQuery = "SELECT AVG(m.price) as price FROM market_data m ";
-    $baseQuery .= "WHERE m.market_id = $market_id  ";
+    $baseQuery .= "WHERE m.market_id IN ($market_id) ";
     $baseQuery .= "AND m.indicator_id = $indicator_id ";
 
     foreach ($month_ids as $month_id) {
@@ -281,7 +291,7 @@ class APIController extends Controller
       $thisYearQuery = $baseQuery;
       $lastYearQuery = $baseQuery;
 
-      $thisYearQuery .= "AND m.year_name = $thisYear ";
+      $thisYearQuery .= "AND m.year_name = $endYear ";
       $thisYearQuery .= "AND m.month_id = $month_id->month_id ";
       $lastYearQuery .= "AND m.year_name = $lastYear ";
       $lastYearQuery .= "AND m.month_id = $month_id->month_id ";
@@ -301,14 +311,14 @@ class APIController extends Controller
   }
 
   //Comparison between current price with LTM
-  function percentageOfLTM($thisYear, $indicator_id, $market_id)
+  function percentageOfLTM($endYear, $indicator_id, $market_ids)
   {
-    $ltm = $this->ltm($thisYear, $indicator_id, $market_id);
-    $distinctIds = $this->distinctMonthIds($thisYear, $indicator_id, $market_id);
+    $ltm = $this->ltm($endYear, $indicator_id, $market_ids);
+    $distinctIds = $this->distinctMonthIds($endYear, $indicator_id, $market_ids);
     $query = "SELECT AVG(m.price) as price FROM market_data m ";
-    $query .= "WHERE m.market_id = $market_id  ";
+    $query .= "WHERE m.market_id IN ($market_ids)  ";
     $query .= "AND m.indicator_id = $indicator_id ";
-    $query .= "AND m.year_name = $thisYear ";
+    $query .= "AND m.year_name = $endYear ";
     $data = array();
 
     foreach ($distinctIds as $monthData) {
@@ -336,15 +346,16 @@ class APIController extends Controller
 
   }
 
-  function twelveMonthMinMax($thisYear, $indicator_id, $market_id)
+  function twelveMonthMinMax($endYear, $indicator_id, $market_ids)
   {
     $data = array();
-    $lastYear = $thisYear - 1;
+    $lastYear = $endYear - 1;
     for ($month_id = 1; $month_id <= 12; $month_id++) {
       $query = "SELECT m.year_name, m.month_id, AVG(price) as monthly_average ";
       $query .= "FROM market_data m ";
-      $query .= "WHERE ((year_name = $lastYear AND month_id > $month_id) OR (year_name = $thisYear AND month_id <= $month_id)) ";
-      $query .= "AND m.market_id = $market_id AND m.indicator_id = $indicator_id  ";
+      $query .= "WHERE ((year_name = $lastYear AND month_id > $month_id) OR (year_name = $endYear AND month_id <= $month_id)) ";
+      $query .= "AND m.market_id IN ($market_ids) ";
+      $query .= "AND m.indicator_id = $indicator_id ";
       $query .= "GROUP BY m.year_name, m.month_id ";
       $result = DB::select(DB::raw($query));
       $temp = array();
@@ -353,27 +364,24 @@ class APIController extends Controller
           $temp[] = $result[$row]->monthly_average;
         }
       }
-
       $maxValues = $temp;
       $minValues = $temp;
       sort($minValues); //Sort in ascending order
       rsort($maxValues);// Sort array in descending order
-
       $max = new MonthlyData($month_id, round($maxValues[0]));
       $min = new MonthlyData($month_id, round($minValues[0]));
       $maxMin = array("max" => $max, "min" => $min);
       $data[] = $maxMin;
     }
-
     return $data;
   }
 
-  function sixMonthMaxMin($thisYear, $indicator_id, $market_id)
+  function sixMonthMaxMin($endYear, $indicator_id, $market_ids)
   {
     /*
-    $result = $this->distinctMonthIds($thisYear, $indicator_id, $market_id);
+    $result = $this->distinctMonthIds($thisYear, $indicator_id, $market_ids);
     */
-    $lastYear = $thisYear - 1;
+    $lastYear = $endYear - 1;
     $monthYearObjects = array();
     $data = array();
 
@@ -384,7 +392,7 @@ class APIController extends Controller
 
         //Get this years monthYear objects
         for ($k = 1; $k <= $month_id; $k++) {
-          $temp[] = array("month_id" => $k, "year_name" => $thisYear);
+          $temp[] = array("month_id" => $k, "year_name" => $endYear);
         }
         $lastMonthId = (12 - (6 - $month_id));
 
@@ -396,7 +404,7 @@ class APIController extends Controller
       } else {
         //Get this years monthYear objects
         for ($k = 1; $k <= $month_id; $k++) {
-          $temp[] = array("month_id" => $k, "year_name" => $thisYear);
+          $temp[] = array("month_id" => $k, "year_name" => $endYear);
         }
         $monthYearObjects[$month_id] = $temp;
       }
@@ -409,7 +417,8 @@ class APIController extends Controller
         $year_name = $monthYearObject['year_name'];
         $query = "SELECT m.month_id, AVG(price) as monthly_average ";
         $query .= "FROM market_data m ";
-        $query .= "WHERE m.market_id = $market_id AND m.indicator_id = $indicator_id ";
+        $query .= "WHERE m.market_id IN ($market_ids) ";
+        $query .= "AND m.indicator_id = $indicator_id ";
         $query .= "AND m.year_name = $year_name and m.month_id = $currentMonthId ";
         $result = DB::select(DB::raw($query));
         $monthTemp [] = $result[0]->monthly_average;
@@ -420,8 +429,8 @@ class APIController extends Controller
       sort($minValues);
       rsort($maxValues);
 
-      $max = new MonthlyData($monthId, round($maxValues[0])>0 ?round($maxValues[0]): "" );
-      $min = new MonthlyData($monthId, round($minValues[0])>0 ?round($minValues[0]) : "");
+      $max = new MonthlyData($monthId, round($maxValues[0]) > 0 ? round($maxValues[0]) : "");
+      $min = new MonthlyData($monthId, round($minValues[0]) > 0 ? round($minValues[0]) : "");
 
       $maxMin = array("max" => $max, "min" => $min);
       $data[] = $maxMin;
@@ -430,10 +439,10 @@ class APIController extends Controller
 
   }
 
-  function sixMonthsDiff($thisYear, $indicator_id, $market_id)
+  function sixMonthsDiff($endYear, $indicator_id, $market_ids)
   {
-    $lastYear = $thisYear - 1;
-    $thisYearMonths = $this->distinctMonthIds($thisYear, $indicator_id, $market_id);
+    $lastYear = $endYear - 1;
+    $thisYearMonths = $this->distinctMonthIds($endYear, $indicator_id, $market_ids);
     $comparisons = array();
 
     for ($i = 0; $i < count($thisYearMonths); $i++) {
@@ -443,9 +452,9 @@ class APIController extends Controller
         $sixMonthID = $currentMonthId - 6;
         $query = "SELECT m.month_id, AVG(price) as monthly_average ";
         $query .= "FROM market_data m ";
-        $query .= "WHERE m.market_id = $market_id ";
+        $query .= "WHERE m.market_id IN ($market_ids) ";
         $query .= "AND m.indicator_id = $indicator_id ";
-        $query .= "AND m.year_name = $thisYear ";
+        $query .= "AND m.year_name = $endYear ";
         $query .= "AND ((m.month_id = $currentMonthId ) ||  (m.month_id = $sixMonthID)) ";
         $query .= "GROUP BY m.month_id ";
         $result = DB::select(DB::raw($query));
@@ -471,10 +480,10 @@ class APIController extends Controller
         $sixMonthID = $currentMonthId + 6;
         $query = "SELECT m.year_name, m.month_id, AVG(price) as monthly_average ";
         $query .= "FROM market_data m ";
-        $query .= "WHERE m.market_id = $market_id ";
+        $query .= "WHERE m.market_id IN ($market_ids) ";
         $query .= "AND m.indicator_id = $indicator_id ";
         $query .= "AND ((m.year_name = $lastYear and m.month_id = $sixMonthID) ";
-        $query .= "|| (m.year_name = $thisYear and m.month_id = $currentMonthId)) ";
+        $query .= "|| (m.year_name = $endYear and m.month_id = $currentMonthId)) ";
         $query .= "GROUP BY  m.year_name, m.month_id ";
         $result = DB::select(DB::raw($query));
 
@@ -482,7 +491,7 @@ class APIController extends Controller
         $numerator = 0;
 
         foreach ($result as $dataRow) {
-          if ($dataRow->year_name == $thisYear) {
+          if ($dataRow->year_name == $endYear) {
             $numerator = $dataRow->monthly_average;
           } else {
             $denominator = $dataRow->monthly_average;
@@ -502,18 +511,15 @@ class APIController extends Controller
     for ($i = $latestMonthId; $i <= 12; $i++) {
       $comparisons[] = new MonthlyData($i, "");
     }
-
     return $comparisons;
-
-
   }
 
 
-  function distinctMonthIds($year, $indicator_id, $market_id)
+  function distinctMonthIds($endYear, $indicator_id, $market_ids)
   {
     $distinct_month_ids = "SELECT DISTINCT(month_id) FROM market_data ";
-    $distinct_month_ids .= "WHERE year_name = $year AND indicator_id = $indicator_id ";
-    $distinct_month_ids .= "AND market_id = $market_id ";
+    $distinct_month_ids .= "WHERE year_name = $endYear AND indicator_id = $indicator_id ";
+    $distinct_month_ids .= "AND market_id IN ($market_ids) ";
     $month_ids = DB::select(DB::raw($distinct_month_ids));
     return $month_ids;
   }

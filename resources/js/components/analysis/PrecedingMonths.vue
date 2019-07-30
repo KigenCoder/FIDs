@@ -35,6 +35,13 @@
 
           }
         }
+
+        if (mutation.type === 'monthly_analysis/totMetaDataMutation') {
+          if (state.monthly_analysis['tot_meta_data']) {
+            this.data_items = state.monthly_analysis['tot_meta_data'].preceding_months
+
+          }
+        }
       })
     },
   }

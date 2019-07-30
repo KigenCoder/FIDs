@@ -42,8 +42,8 @@
         this.$store.dispatch('monthly_analysis/loadRegions')
 
         //Reset data
+        this.$store.commit('monthly_analysis/regionsMutation', [])
         this.$store.commit('monthly_analysis/marketsMutation', [])
-        this.$store.commit('monthly_analysis/indicatorsMutation', [])
         this.$store.commit('monthly_analysis/analysisDataMutation', [])
         this.$store.commit('monthly_analysis/metaDataMutation', [])
 

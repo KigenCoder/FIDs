@@ -28,10 +28,18 @@
 
     mounted() {
       this.$store.subscribe((mutation, state) => {
-
+         //Market analysis
         if (mutation.type === 'monthly_analysis/metaDataMutation') {
           if (state.monthly_analysis['meta_data']) {
             this.data_items = state.monthly_analysis['meta_data'].six_months_diff
+
+          }
+        }
+
+        //Market analysis
+        if (mutation.type === 'monthly_analysis/totMetaDataMutation') {
+          if (state.monthly_analysis['tot_meta_data']) {
+            this.data_items = state.monthly_analysis['tot_meta_data'].six_months_diff
 
           }
         }

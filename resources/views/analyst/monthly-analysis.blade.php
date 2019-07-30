@@ -2,76 +2,84 @@
 
 @section('content')
     <div id="app">
-        <div class="tile is-ancestor top-padding">
-            <div class="tile is-3 is-vertical is-parent filters-panel">
-                <div class="tile box is-parent is-vertical">
-                    <span class="title tag is-success is-medium">LOCATION</span>
-                    <div class="scroll-y">
-                        <!-- Zone -->
-                        <div class="tile is-parent  field">
-                            <div class="tile is-child">
-                                <zones></zones>
-                            </div>
-                        </div>
+        <!--Dataset and Indicators -->
+        <div class="tile is-parent is-fullwidth">
 
-                        <!-- Regions -->
-                        <div class="tile is-parent field">
-                            <div class="tile is-child">
-                                <regions></regions>
-                            </div>
+            <!-- Market Type -->
+            <div class="tile is-child">
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">DATA SET</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <market_type></market_type>
                         </div>
+                    </div>
 
-                        <!-- Markets -->
-                        <div class="tile is-parent field">
-                            <div class="tile is-child">
-                                <markets></markets>
-                            </div>
-                        </div>
-
-                        <!-- Indicators -->
-                        <div class="tile is-parent is-vertical field">
-                            <div class="tile is-child">
-                                <indicators></indicators>
-                            </div>
+                    <!-- Indicators -->
+                    <div class="field-label is-normal">
+                        <label class="label">INDICATORS</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <indicators></indicators>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <!-- Time period -->
-                <div class="tile is-parent box is-vertical side-margin">
-                    <span class="title tag is-success is-medium">PERIOD</span>
-                    <div>
-                        <time_period></time_period>
-                    </div>
-                </div>
+        <div class="tile is-parent is-fullwidth">
 
-                <!-- SELECT SERIES -->
-                <div class="tile is-parent box is-vertical">
+            <!-- Zones, Regions -->
+            <div class="tile is-child is-vertical box">
+                <div class="tile is-child is-vertical">
                     <div class="tile is-child">
-                        <series></series>
+                        <zones></zones>
+                    </div>
+                    <!-- Region -->
+                    <div class="tile is-child">
+                        <regions></regions>
+                    </div>
+
+                    <!-- Markets -->
+                    <div class="tile is-child">
+                        <div class="box-scroll">
+                            <markets></markets>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- CALCULATE AVERAGE -->
-                <div class="tile is-parent box is-vertical">
-                    <span class="title tag is-success is-medium">AVERAGE</span>
-                    <div class="scroll-y">
-                        <average></average>
-                    </div>
+
+            <div class="tile is-child box">
+                <div class="tile is-child">
+                    <time_period></time_period>
                 </div>
-
-
-
-
             </div>
-            <div class="tile is-parent">
-                <market_data></market_data>
-                <modal></modal>
+            <div class="tile is-child box">
+                <div>
+                    <series></series>
+                </div>
             </div>
-
+            <div class="tile is-child">
+                <div class="scroll-y">
+                    <average></average>
+                </div>
+            </div>
 
         </div>
+
+
+        <div class="tile is-parent">
+            <market_data></market_data>
+            <modal></modal>
+        </div>
+
+
     </div>
+
 
 
 

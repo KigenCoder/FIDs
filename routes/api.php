@@ -14,6 +14,7 @@ Route::group(['prefix' => 'auth'], function ()
     });
 });
 
+//Monthly analysis
 Route::get('zones', 'APIController@zones');
 Route::post('regions', 'APIController@regions');
 Route::get('years', 'APIController@years');
@@ -21,7 +22,10 @@ Route::post('markets', 'APIController@markets');
 Route::post('indicators', 'APIController@indicators');
 Route::post('analysis_data', 'APIController@analysis_data');
 Route::post('meta_data', 'APIController@marketMetaData');
+Route::post('tot_data', 'ToTController@tot_data');
+Route::post('tot_meta_data', 'ToTController@tot_meta_data');
 
-Route::get("scratch-pad", "ScratchPadController@index");
 
-//Route::get('test', 'APIController@sixMonthsDiff');
+
+//Route::get("scratch-pad", "ScratchPadController@index");
+//Route::get('test', 'APIController@twelveMonthMinMax');

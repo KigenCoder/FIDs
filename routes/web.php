@@ -7,7 +7,8 @@ Route::resource("user.markets", "UserMarkets");
 Route::get("data-entry", "DataEntryController@data_entry");
 Route::get("data-cleaning", "DataCleaningController@data_entry");
 Route::get("monthly-analysis", "MarketAnalysis@monthly_analysis");
-Route::get("scratch-pad", "ScratchPadController@index");
+Route::get("tot", "ToTController@tot");
+//Route::get("scratch-pad", "ScratchPadController@index");
 
 
 

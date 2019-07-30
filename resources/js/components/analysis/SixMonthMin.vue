@@ -28,10 +28,26 @@
 
     mounted() {
       this.$store.subscribe((mutation, state) => {
-
+          //Market analysis
         if (mutation.type === 'monthly_analysis/metaDataMutation') {
           if (state.monthly_analysis['meta_data']) {
             let max_min = state.monthly_analysis['meta_data'].six_months_min_max
+
+            if (max_min) {
+              this.data_items = []
+              for (let i = 0; i < max_min.length; i++) {
+                let min_object = max_min[i].min
+                this.data_items.push(min_object)
+              }
+            }
+
+          }
+        }
+
+        //ToT analysis
+        if (mutation.type === 'monthly_analysis/totMetaDataMutation') {
+          if (state.monthly_analysis['tot_meta_data']) {
+            let max_min = state.monthly_analysis['tot_meta_data'].six_months_min_max
 
             if (max_min) {
               this.data_items = []

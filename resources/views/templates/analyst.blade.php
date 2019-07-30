@@ -6,9 +6,22 @@
 
 <body>
 <div class="container">
-    <div class="masthead" style="text-align: right">
-        <h3 class="text-muted" style="right: 5%;  ">FIDS ANALYSIS</h3>
-    </div>
+    <nav class="level box">
+        <!-- Left side -->
+        <div class="level-left">
+            <div class="level-item">
+                <img src="../../images/fsnau_logo.png" alt="FSNAU">
+            </div>
+        </div>
+
+        <div class="level-item">
+            <p class="title is-6">FSNAU FIDS ANALYSIS</p>
+        </div>
+        <!-- Right side -->
+        <div class="level-right">
+            <img src="../../images/fao_logo.png" alt="FAO">
+        </div>
+    </nav>
     <div id='cssmenu'>
         <ul>
             <li class='has-sub'><a href='#'><span>DATA ENTRY</span></a>
@@ -24,6 +37,7 @@
             <li class='has-sub'><a href='#'><span>MARKET ANALYSIS</span></a>
                 <ul>
                     <li class='has-sub'><span>{!! Html::link('monthly-analysis','Monthly Analysis') !!}</span></li>
+                    <li class='has-sub'><span>{!! Html::link('tot','ToT') !!}</span></li>
                 </ul>
             </li>
             <li class='has-sub'><a href='#'><span>IMPORT DATA</span></a>
@@ -34,6 +48,7 @@
             <li class='last'>{!! Html::link('logout','LOGOUT') !!}</li>
         </ul>
     </div>
+
 </div>
 
 

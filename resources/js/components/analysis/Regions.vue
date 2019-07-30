@@ -31,15 +31,21 @@
     methods: {
       regionSelected() {
         //Update region ID state
-        this.$store.commit('monthly_analysis/regionIdMutation', this.selectedRegion);
+        this.$store.commit('monthly_analysis/regionIdMutation', this.selectedRegion)
 
-        //Fetch markets for given Region
-        this.$store.dispatch('monthly_analysis/loadMarkets')
+        let marketType = this.$store.getters['monthly_analysis/getMarketSystemType']
 
-        //Reset data
-        this.$store.commit('monthly_analysis/indicatorsMutation', [])
-        this.$store.commit('monthly_analysis/analysisDataMutation', [])
-        this.$store.commit('monthly_analysis/metaDataMutation', [])
+        if (marketType !== undefined && parseInt(marketType) > 0) {
+
+          //Reset markets
+          this.$store.commit('monthly_analysis/marketsMutation', [])
+
+          //Fetch markets
+          this.$store.dispatch('monthly_analysis/loadMarkets')
+
+
+        }
+
 
       }
 

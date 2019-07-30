@@ -1,37 +1,43 @@
 @extends('templates.auth')
 
 @section('content')
+    <div class="columns is-centered">
+        <div class="column is-9-tablet is-8-desktop is-7-widescreen">
+            <h1 class="title">FIDS LOGIN</h1>
+            {!! Form::open(['url' => 'login', 'class'=>"box"]) !!}
+            <div class="field">
+                <label for="" class="label">Email</label>
+                <div class="control has-icons-left">
+                    {!! Form::text('email', null, ['class'=>'input', 'placeholder'=>'you@email.com']) !!}
+                    <span class="icon is-small is-left">
+                    <i class="fa fa-envelope"></i>
+                </span>
+                </div>
+            </div>
 
+            <div class="field">
+                <label for="" class="label">Password</label>
+                <div class="control has-icons-left">
+                    {!! Form::password('password', ['class'=>'input', 'placeholder'=>'********']) !!}
+                    <span class="icon is-small is-left">
+                    <i class="fa fa-lock"></i>
+                </span>
+                </div>
+            </div>
+            <div class="field">
+                <label for="" class="checkbox">
+                    <input type="checkbox">
+                    Remember me
+                </label>
+            </div>
+            <div class="field">
+                <button class="button is-info">
+                    Login
+                </button>
+            </div>
+            {!! Form::close() !!}
 
-    <div class="col-lg-2"></div>
-    <div class="col-lg-8">
-        {{-- Display erros if any --}}
-        @include('errors.list')
-        <div class="well bs-component">
-            {!! Form::open(['url' => 'login', 'class'=>"form-horizontal"]) !!}
-            <fieldset>
-                <h3>Login</h3>
-                <div class="form-group">
-                    <label for="email" class="col-lg-2 control-label">Email</label>
-                    <div class="col-lg-10">
-                        {!! Form::text('email', null, ['class'=>'form-control']) !!}
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="password" class="col-lg-2 control-label">Password</label>
-                    <div class="col-lg-10">
-                        {!! Form::password('password', ['class'=>'form-control']) !!}
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-lg-10 col-lg-offset-2">
-                        <button type="submit" class="btn btn-primary">Login</button>
-                    </div>
-                </div>
-            </fieldset>
-            </form>
         </div>
     </div>
-    <div class="col-lg-2"></div>
-    {!! Form::close() !!}
+
 @stop
