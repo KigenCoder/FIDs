@@ -15,7 +15,7 @@
         </div>
 
         <div class="level-item">
-            <p class="title is-6">FSNAU FIDS ANALYSIS</p>
+            <p class="title is-6">FIDS ANALYSIS</p>
         </div>
         <!-- Right side -->
         <div class="level-right">

@@ -24,6 +24,12 @@ Route::post('analysis_data', 'APIController@analysis_data');
 Route::post('meta_data', 'APIController@marketMetaData');
 Route::post('tot_data', 'ToTController@tot_data');
 Route::post('tot_meta_data', 'ToTController@tot_meta_data');
+Route::post('cleaning_markets', 'DataUpdates@markets');
+Route::post('cleaning_data', 'DataUpdates@market_data');
+Route::post('update_data', 'DataUpdates@updateData');
+Route::post('market_indicators', 'DataUpdates@market_indicators');
+Route::post('save_data', 'DataEntry@save_data');
+Route::post('supply_update', 'DataEntry@supply_update');
 
 
 

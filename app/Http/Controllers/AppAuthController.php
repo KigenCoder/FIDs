@@ -80,7 +80,7 @@ class AppAuthController extends Controller
     {
         $input = $request->all();
         $metaData = $input["metaData"];
-        $marketData = $input["marketData"];
+        $marketData = $input["marketIndicators"];
         $year_name = $metaData["yearName"];
         $month_id = $metaData["month_id"];
         $week = $metaData["week"];

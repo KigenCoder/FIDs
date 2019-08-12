@@ -21,6 +21,16 @@ Vue.component('tot_time_period', require('./components/ToT/ToTTimePeriod.vue').d
 Vue.component('tot_time_series', require('./components/ToT/ToTTimeSeries.vue').default);
 Vue.component('tot_data', require('./components/ToT/ToTData.vue').default);
 Vue.component('tot_series_chart', require('./components/ToT/TOTTimeSeriesChart.vue').default);
+Vue.component('market_types', require('./components/DataCleaning/MarketType.vue').default);
+Vue.component('cleaning_markets', require('./components/DataCleaning/Markets.vue').default);
+Vue.component('month_years', require('./components/DataCleaning/MonthYears.vue').default);
+Vue.component('data_cleaning_table', require('./components/DataCleaning/DataTable.vue').default);
+Vue.component('entry_market_type', require('./components/DataEntry/EntryMarketType.vue').default);
+Vue.component('data_entry_markets', require('./components/DataEntry/DataEntryMarkets.vue').default);
+Vue.component('entry_month_years', require('./components/DataEntry/EntryMonthYears.vue').default);
+Vue.component('data_entry_table', require('./components/DataEntry/DataEntryTable.vue').default);
+
+
 
 
 var app = new Vue({

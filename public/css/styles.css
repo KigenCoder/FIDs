@@ -4,13 +4,13 @@
     height: 100px;
 }
 
-.box-scroll{
+.box-scroll {
     overflow-y: auto;
     height: 100px;
     margin-top: 10px;
 }
 
-.box-top-margin{
+.box-top-margin {
     margin-top: 10px;
 }
 
@@ -28,7 +28,7 @@
 }
 
 .top-padding {
-    padding-top: 20px;
+    margin-top: 20px;
 }
 
 .filters-panel {
@@ -51,6 +51,15 @@
     overflow-y: scroll;
     width: auto;
     position: absolute;
+}
+
+.category{
+    background: #C0C0C0;
+    font-weight: bolder;
+}
+
+.indicator{
+font-weight: normal;
 }
 
 
