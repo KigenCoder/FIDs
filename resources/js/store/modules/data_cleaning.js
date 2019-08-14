@@ -8,6 +8,7 @@ const state = {
   marketTypeId: null,
   priceId: null,
   updatedPrice: null,
+  refresh: false,
 }
 
 const mutations = {
@@ -41,6 +42,10 @@ const mutations = {
 
   priceMutation(state, updatedPrice) {
     state.updatedPrice = updatedPrice
+  },
+
+  refreshPage(state, refresh){
+    state.refresh = refresh
   },
 
 }

@@ -2,7 +2,7 @@
   <div class="field control">
     <div class="select is-primary is-small" style="width: 100px">
       <select v-model="selectedIndicator" @change="indicatorSelected">
-        <option value="" disabled selected>Indicators</option>
+        <option value="" disabled selected>First Indicator</option>
         <option v-for="indicator in indicators" v-bind:value="indicator.id">
           {{indicator.indicator_business_name}}
         </option>

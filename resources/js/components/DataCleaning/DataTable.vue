@@ -1,6 +1,6 @@
 <template>
-  <div class="container">
-    <table class="table is-bordered is-narrow is-hoverable is-fullwidth is-size-7">
+  <div class="container" :key="componentKey">
+    <table v-if="showTable" class="table is-bordered is-hoverable is-fullwidth small-font is-size-7">
       <th>INDICATOR</th>
       <th>WEEK 1</th>
       <th>WEEK 2</th>
@@ -10,8 +10,8 @@
       <th>Last month's average</th>
       <tbody>
       <data_row_item v-for="(data_row, index) in market_data"
-          v-bind:data_row="data_row"
-          v-bind:key="index">
+                     v-bind:data_row="data_row"
+                     v-bind:key="index">
       </data_row_item>
       </tbody>
     </table>
@@ -31,7 +31,20 @@
     },
 
     data() {
-      return {}
+      return {
+        showTable: false
+      }
+    },
+
+    mounted() {
+      this.$store.subscribe((mutation, state) => {
+        if (mutation.type === 'data_cleaning/marketDataMutation'
+          && state.data_cleaning.market_data.length > 0) {
+          //console.log(state.data_cleaning.market_data.length)
+          this.showTable = true
+        }
+
+      })
     },
 
     computed: {
@@ -40,5 +53,10 @@
       ]),
 
     },
+    methods: {
+      forceRerender() {
+        this.componentKey += 1;
+      }
+    }
   }
 </script>

@@ -5,7 +5,7 @@
 </head>
 
 <body>
-<div class="container">
+<div class="container top-padding">
     <nav class="level box">
         <!-- Left side -->
         <div class="level-left">
@@ -52,20 +52,13 @@
 </div>
 
 
-<div class="tile is-ancestor is-vertical">
-    <div class="container">
-        <div class="top-padding">
-            @yield('content')
-        </div>
-
+<div class="column container is-full">
+    <div class="box container">
+        @yield('content')
     </div>
     <div class="container">
-        <div class="top-padding">
             @include('templates.footer')
-        </div>
-
     </div>
-
 </div>
 </body>
 

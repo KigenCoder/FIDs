@@ -1,6 +1,6 @@
 <template>
   <div class="tile box is-parent is-vertical">
-    <table class="table table is-narrow is-bordered is-stripped small-font is-size-7 ">
+    <table class="table table is-narrow is-bordered is-stripped small-font is-size-7">
       <caption style="color: blue">
         <strong>{{getIndicatorName}}</strong>
       </caption>

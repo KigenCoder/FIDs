@@ -1,6 +1,6 @@
 <template>
   <div class="container" :key="componentKey">
-    <table class="table is-bordered is-narrow is-hoverable is-fullwidth">
+    <table v-if="showTable" class="table is-bordered is-hoverable is-fullwidth small-font is-size-7">
       <th>INDICATOR</th>
       <th>WEEK 1</th>
       <th>WEEK 2</th>
@@ -35,6 +35,7 @@
     data() {
       return {
         componentKey: 0,
+        showTable: false,
       }
     },
 
@@ -46,10 +47,16 @@
     },
     mounted() {
       this.$store.subscribe((mutation, state) => {
-        if (mutation.type === 'data_entry/refreshPage') {
-          this.forceRerender()
+        switch (mutation.type) {
+          case 'data_entry/refreshPage':
+            this.forceRerender()
+            break
+          case 'data_entry/marketIndicatorsMutation':
+            if (state.data_entry.marketIndicators.length > 0) {
+              this.showTable = true
+              break
+            }
         }
-
       })
     },
     methods: {

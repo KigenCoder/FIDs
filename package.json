@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "apexcharts": "^3.8.2",
+    "bulma": "^0.7.5",
     "chart.js": "^2.8.0",
     "es6-promise": "^4.2.6",
     "validate.js": "^0.12.0",

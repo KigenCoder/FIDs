@@ -6,7 +6,7 @@
             <!--Dataset and Indicators -->
             <div class="tile is-parent container box top-padding">
 
-                <div class="columns is-fullwidth ">
+                <div class="columns is-full ">
                     <div class="column">
                         <entry_market_type></entry_market_type>
                     </div>

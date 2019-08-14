@@ -2,35 +2,19 @@
 
 @section('content')
     <div id="app">
-        <!--Dataset and Indicators -->
         <div class="tile is-parent is-fullwidth">
-
-            <!-- Market Type -->
-            <div class="tile is-child">
-                <div class="field is-horizontal">
-                    <div class="field-label is-normal">
-                        <label class="label">DATA SET</label>
+            <!--Dataset and Indicators -->
+            <div class="tile is-child is-vertical box">
+                <div class="tile is-child is-vertical">
+                    <div class="tile is-child">
+                        <market_type></market_type>
                     </div>
-                    <div class="field-body">
-                        <div class="field">
-                            <market_type></market_type>
-                        </div>
-                    </div>
-
                     <!-- Indicators -->
-                    <div class="field-label is-normal">
-                        <label class="label">INDICATORS</label>
-                    </div>
-                    <div class="field-body">
-                        <div class="field">
-                            <indicators></indicators>
-                        </div>
+                    <div class="tile is-child">
+                        <indicators></indicators>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="tile is-parent is-fullwidth">
 
             <!-- Zones, Regions -->
             <div class="tile is-child is-vertical box">
@@ -68,7 +52,6 @@
                     <average></average>
                 </div>
             </div>
-
         </div>
 
 

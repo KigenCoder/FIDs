@@ -6,14 +6,14 @@
 <!-- /container -->
 
 <!-- javascript -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="{{asset('js/jquery.min.js')}}"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.js"></script>
+<script src="{{asset('js/es6-promise.auto.js')}}"></script>
 
 <!-- development version, includes helpful console warnings -->
-<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="{{asset('js/vue.js')}}"></script>
 
 
 <!-- Vue Javascript file -->
 <script src="{{asset('js/app.js')}}"></script>
-<script type="text/javascript" src="https://unpkg.com/bulma-modal-fx/dist/js/modal-fx.min.js"></script>
+<script type="text/javascript" src="{{asset('js/modal-fx.min.js')}}"></script>
