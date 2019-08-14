@@ -415,11 +415,12 @@ class APIController extends Controller
       foreach ($sixMonthObjects as $monthYearObject) {
         $currentMonthId = $monthYearObject['month_id'];
         $year_name = $monthYearObject['year_name'];
-        $query = "SELECT m.month_id, AVG(price) as monthly_average ";
+        $query = "SELECT AVG(price) as monthly_average ";
         $query .= "FROM market_data m ";
         $query .= "WHERE m.market_id IN ($market_ids) ";
         $query .= "AND m.indicator_id = $indicator_id ";
         $query .= "AND m.year_name = $year_name and m.month_id = $currentMonthId ";
+        //$query .= "GROUP BY m.month_id ";
         $result = DB::select(DB::raw($query));
         $monthTemp [] = $result[0]->monthly_average;
       }
