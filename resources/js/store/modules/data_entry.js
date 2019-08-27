@@ -52,6 +52,7 @@ const mutations = {
 
   refreshPage(state, refresh){
     state.refresh = refresh
+    //console.log(state.refresh)
   }
 
 }

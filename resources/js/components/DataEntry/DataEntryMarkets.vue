@@ -29,11 +29,10 @@
       ])
     },
 
-
     methods: {
       marketSelected: function () {
         this.$store.commit('data_entry/marketIdMutation', this.marketId)
-        this.$store.commit('data_entry/refreshPage')
+        this.$store.commit('data_entry/refreshPage', true)
 
         let monthId = this.$store.getters['data_entry/getMonthId']
         let yearName = this.$store.getters['data_entry/getYearName']

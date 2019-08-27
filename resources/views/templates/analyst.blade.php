@@ -40,10 +40,7 @@
                     <li class='has-sub'><span>{!! Html::link('tot','ToT') !!}</span></li>
                 </ul>
             </li>
-            <li class='has-sub'><a href='#'><span>IMPORT DATA</span></a>
-            </li>
-            <li class='has-sub'><a href='#'><span>EXPORT DATA</span></a>
-            </li>
+            <li class='last'>{!! Html::link('export','EXPORT') !!}</li>
 
             <li class='last'>{!! Html::link('logout','LOGOUT') !!}</li>
         </ul>
@@ -57,7 +54,7 @@
         @yield('content')
     </div>
     <div class="container">
-            @include('templates.footer')
+        @include('templates.footer')
     </div>
 </div>
 </body>

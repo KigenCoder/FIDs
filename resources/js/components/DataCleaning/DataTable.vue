@@ -32,16 +32,24 @@
 
     data() {
       return {
-        showTable: false
+        showTable: false,
+        componentKey: 0
       }
     },
 
     mounted() {
       this.$store.subscribe((mutation, state) => {
-        if (mutation.type === 'data_cleaning/marketDataMutation'
-          && state.data_cleaning.market_data.length > 0) {
-          //console.log(state.data_cleaning.market_data.length)
-          this.showTable = true
+        switch (mutation.type) {
+          case  'data_cleaning/marketDataMutation':
+            if (state.data_cleaning.market_data.length > 0) {
+              this.showTable = true
+            }
+            break;
+          case 'data_cleaning/refreshPage':
+            if (state.data_cleaning.refresh) {
+              this.forceRerender()
+            }
+
         }
 
       })
@@ -56,6 +64,7 @@
     methods: {
       forceRerender() {
         this.componentKey += 1;
+        this.$store.commit('data_cleaning/refreshPage', false)
       }
     }
   }

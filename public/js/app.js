@@ -2016,16 +2016,27 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   data: function data() {
     return {
-      showTable: false
+      showTable: false,
+      componentKey: 0
     };
   },
   mounted: function mounted() {
     var _this = this;
 
     this.$store.subscribe(function (mutation, state) {
-      if (mutation.type === 'data_cleaning/marketDataMutation' && state.data_cleaning.market_data.length > 0) {
-        //console.log(state.data_cleaning.market_data.length)
-        _this.showTable = true;
+      switch (mutation.type) {
+        case 'data_cleaning/marketDataMutation':
+          if (state.data_cleaning.market_data.length > 0) {
+            _this.showTable = true;
+          }
+
+          break;
+
+        case 'data_cleaning/refreshPage':
+          if (state.data_cleaning.refresh) {
+            _this.forceRerender();
+          }
+
       }
     });
   },
@@ -2033,6 +2044,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   methods: {
     forceRerender: function forceRerender() {
       this.componentKey += 1;
+      this.$store.commit('data_cleaning/refreshPage', false);
     }
   }
 });
@@ -2250,6 +2262,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     monthSelected: function monthSelected() {
       //Commit to the store the current month ID
       this.$store.commit('data_cleaning/monthIdMutation', this.month_id);
+      this.$store.commit('data_cleaning/refreshPage', true);
       var yearName = this.$store.getters['data_cleaning/getYearName'];
       var marketId = this.$store.getters['data_cleaning/getMarketId'];
 
@@ -2391,7 +2404,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   methods: {
     marketSelected: function marketSelected() {
       this.$store.commit('data_entry/marketIdMutation', this.marketId);
-      this.$store.commit('data_entry/refreshPage');
+      this.$store.commit('data_entry/refreshPage', true);
       var monthId = this.$store.getters['data_entry/getMonthId'];
       var yearName = this.$store.getters['data_entry/getYearName'];
 
@@ -2465,7 +2478,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     this.$store.subscribe(function (mutation, state) {
       switch (mutation.type) {
         case 'data_entry/refreshPage':
-          _this.forceRerender();
+          if (state.data_entry.refresh) {
+            _this.forceRerender();
+          }
 
           break;
 
@@ -2481,6 +2496,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   methods: {
     forceRerender: function forceRerender() {
       this.componentKey += 1;
+      this.$store.commit('data_entry/refreshPage', false);
     }
   }
 });
@@ -2644,7 +2660,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     monthSelected: function monthSelected() {
       //Commit to the store the current month ID
       this.$store.commit('data_entry/monthIdMutation', this.month_id);
-      this.$store.commit('data_entry/refreshPage');
+      this.$store.commit('data_entry/refreshPage', true);
       var yearName = this.$store.getters['data_entry/getYearName'];
       var marketId = this.$store.getters['data_entry/getMarketId'];
 
@@ -2655,7 +2671,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     },
     yearSelected: function yearSelected() {
       this.$store.commit('data_entry/yearNameMutation', this.year_name);
-      this.$store.commit('data_entry/refreshPage');
+      this.$store.commit('data_entry/refreshPage', true);
+      console.log(this.$store.getters['data_entry/refre']);
       var monthId = this.$store.getters['data_entry/getMonthId'];
       var marketId = this.$store.getters['data_entry/getMarketId'];
 
@@ -41967,6 +41984,7 @@ var mutations = {
   },
   refreshPage: function refreshPage(state, refresh) {
     state.refresh = refresh;
+    console.log(state.refresh);
   }
 };
 var actions = {
@@ -42078,7 +42096,7 @@ var mutations = {
     state.supply_id = supply_id;
   },
   refreshPage: function refreshPage(state, refresh) {
-    state.refresh = refresh;
+    state.refresh = refresh; //console.log(state.refresh)
   }
 };
 var actions = {

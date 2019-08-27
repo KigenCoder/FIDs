@@ -49,8 +49,11 @@
       this.$store.subscribe((mutation, state) => {
         switch (mutation.type) {
           case 'data_entry/refreshPage':
-            this.forceRerender()
+            if(state.data_entry.refresh){
+              this.forceRerender();
+            }
             break
+
           case 'data_entry/marketIndicatorsMutation':
             if (state.data_entry.marketIndicators.length > 0) {
               this.showTable = true
@@ -62,6 +65,7 @@
     methods: {
       forceRerender() {
         this.componentKey += 1;
+        this.$store.commit('data_entry/refreshPage', false)
       }
     }
   }

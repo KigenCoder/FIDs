@@ -75,6 +75,8 @@
         //Commit to the store the current month ID
         this.$store.commit('data_cleaning/monthIdMutation', this.month_id)
 
+        this.$store.commit('data_cleaning/refreshPage', true)
+
         let yearName = this.$store.getters['data_cleaning/getYearName']
         let marketId = this.$store.getters['data_cleaning/getMarketId']
 

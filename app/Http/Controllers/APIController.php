@@ -410,7 +410,6 @@ class APIController extends Controller
       }
     }
     foreach ($monthYearObjects as $monthId => $sixMonthObjects) {
-
       $monthTemp = array();
       foreach ($sixMonthObjects as $monthYearObject) {
         $currentMonthId = $monthYearObject['month_id'];

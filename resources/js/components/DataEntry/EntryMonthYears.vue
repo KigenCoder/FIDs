@@ -74,7 +74,7 @@
       monthSelected: function () {
         //Commit to the store the current month ID
         this.$store.commit('data_entry/monthIdMutation', this.month_id)
-        this.$store.commit('data_entry/refreshPage')
+        this.$store.commit('data_entry/refreshPage', true)
 
         let yearName = this.$store.getters['data_entry/getYearName']
         let marketId = this.$store.getters['data_entry/getMarketId']
@@ -86,7 +86,8 @@
       },
       yearSelected: function () {
         this.$store.commit('data_entry/yearNameMutation', this.year_name)
-        this.$store.commit('data_entry/refreshPage')
+        this.$store.commit('data_entry/refreshPage', true)
+        console.log(this.$store.getters['data_entry/refre'])
         let monthId = this.$store.getters['data_entry/getMonthId']
         let marketId = this.$store.getters['data_entry/getMarketId']
 
