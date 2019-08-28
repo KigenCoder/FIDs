@@ -1,7 +1,9 @@
 <table border="1">
-    @for($i=0; $i<count($columnHeaders); $i++)
-        <th>{{$columnHeaders[$i]}}</th>
-    @endfor
+    <tr>
+        @for($i=0; $i<count($columnHeaders); $i++)
+            <td><strong>{{$columnHeaders[$i]}}</strong></td>
+        @endfor
+    </tr>
 
     @for($i=0; $i<count($rowItems); $i++)
         @foreach($rowItems[$i] as $rowItem)
@@ -9,6 +11,7 @@
                 <td>{{$rowItem->region}}</td>
                 <td>{{$rowItem->district}}</td>
                 <td>{{$rowItem->market}}</td>
+                <td>{{$rowItem->marketType}}</td>
                 <td>{{$rowItem->year}}</td>
                 <td>{{$rowItem->month}}</td>
                 @foreach($rowItem->rowCellItems as $rowCellItem)

@@ -67,10 +67,14 @@
 		public function store(ExportRequest $request) {
 			$input = $request->all();
 
+
 			//Get markets
 			$system_id = NULL;
+			$marketTypeId = NULL;
 			if ($request->has('marketType')) {
-				switch ($input['marketType']) {
+
+				$marketTypeId = $input['marketType'];
+				switch ($marketTypeId) {
 					case 1:
 						$system_id = 1;
 						break;
@@ -91,7 +95,7 @@
 
 			foreach ($markets as $market) {
 				//Get data for the given month
-				$marketData = $this->getMarketData($market, $startMonth, $startYear, $endMonth, $endYear);
+				$marketData = $this->getMarketData($market, $startMonth, $startYear, $endMonth, $endYear, $marketTypeId);
 				if (count($marketData) > 0) {
 					$rowItems[] = $marketData;
 				}
@@ -99,8 +103,8 @@
 
 			//dd($rowItems);
 			$data = array();
-			$columnHeaders = array("Region", "District", "Market", "Year", "Month");
-			$indicators = $this->getIndicatorList();
+			$columnHeaders = array("Region", "District", "Market", "Market Type", "Year", "Month");
+			$indicators = $this->getIndicatorList($marketTypeId);
 			foreach ($indicators as $indicator) {
 				array_push($columnHeaders, $indicator->indicator_business_name);
 			}
@@ -109,21 +113,21 @@
 			$data['columnHeaders'] = $columnHeaders;
 
 			//return view('exports.table', $data);
-			return Excel::download(new DataExportView($rowItems, $columnHeaders), 'market_data.xlsx');
+			return Excel::download(new DataExportView($columnHeaders, $rowItems), 'market_data.xlsx');
 		}
 
 
 		function getMarkets($system_id = NULL) {
-			$query = "select r.region_name, d.district_name, m.market_name, m.id as market_id ";
+			$query = "select r.region_name, d.district_name, m.market_name, m.id as market_id, m.system_id ";
 			$query .= "FROM markets m ";
 			$query .= "JOIN district d on d.id = m.district_id ";
 			$query .= "JOIN region r ON r.id = d.region_id ";
-			$query .= !is_null($system_id) ? "WHERE system_id = $system_id " : " ";
+			$query .= !is_null($system_id) ? "WHERE m.system_id = $system_id " : " ";
 			$markets = DB::SELECT(DB::raw($query));
 			return $markets;
 		}
 
-		function getMarketData($market, $startMonth, $startYear, $endMonth = NULL, $endYear = NULL) {
+		function getMarketData($market, $startMonth, $startYear, $endMonth = NULL, $endYear = NULL, $marketTypeId = NULL) {
 			$marketId = $market->market_id;
 			$timePeriods = array();
 			//Process the time periods create new variables
@@ -172,7 +176,7 @@
 				//If there is data
 				if (count($results) > 0) {
 					/*Order indicators to follow a pre-defined sequence ASC */
-					$indicators = $this->getIndicatorList();
+					$indicators = $this->getIndicatorList($marketTypeId);
 
 					foreach ($indicators as $indicator) {
 						$indicator_business_name = $indicator->indicator_business_name;
@@ -199,6 +203,7 @@
 					$dataRowItem->region = $market->region_name;
 					$dataRowItem->district = $market->district_name;
 					$dataRowItem->market = $market->market_name;
+					$dataRowItem->marketType = $market->system_id == 1 ? "Main market" : "SLIM";
 					$dataRowItem->marketId = $marketId;
 					$dataRowItem->year = $year_name;
 					$dataRowItem->month = $monthName;
@@ -210,8 +215,25 @@
 			return $dataRowItems;
 		}
 
-		function getIndicatorList() {
-			$query = "SELECT i.indicator_business_name FROM indicators i ORDER BY i.indicator_business_name ";
+		function getIndicatorList($marketTypeId = NULL) {
+			$whereClause = "";
+			switch ($marketTypeId) {
+				case 1:
+					//Main Markets
+					$whereClause = "WHERE i.application_id IN (1,3) ";
+					break;
+				case 2:
+					//SLIM I
+					$whereClause = "WHERE i.application_id IN (2,3) ";
+					break;
+				case 3:
+					//SLIM II
+					$whereClause = "WHERE i.application_id IN (4) ";
+					break;
+			}
+			$query = "SELECT i.indicator_business_name FROM indicators i ";
+			$query .= $whereClause;
+			$query .= "ORDER BY i.indicator_business_name ";
 			$indicators = DB::SELECT(DB::raw($query));
 			return $indicators;
 		}

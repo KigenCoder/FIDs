@@ -4,9 +4,9 @@
 
 	use Illuminate\Contracts\View\View;
 	use Maatwebsite\Excel\Concerns\FromView;
-	use Maatwebsite\Excel\Concerns\WithHeadings;
 
-	class DataExportView implements FromView, WithHeadings{
+
+	class DataExportView implements FromView{
 		private $rowItems;
 		private $columnHeaders;
 
@@ -15,9 +15,9 @@
 		 * @param $rowItems
 		 * @param $columnHeaders
 		 */
-		public function __construct($rowItems, $columnHeaders) {
-			$this->rowItems = $rowItems;
+		public function __construct($columnHeaders, $rowItems) {
 			$this->columnHeaders = $columnHeaders;
+			$this->rowItems = $rowItems;
 		}
 
 
@@ -28,10 +28,12 @@
 				'columnHeaders'=>$this->columnHeaders
 			]);
 		}
-		
+
 		/* @return array */
+		/*
 		public function headings(): array {
 			return  $this->columnHeaders;
 		}
+		*/
 
 	}
