@@ -4,39 +4,34 @@
 
 	use Illuminate\Contracts\View\View;
 	use Maatwebsite\Excel\Concerns\FromView;
+	use Maatwebsite\Excel\Concerns\WithHeadings;
 
-	class DataExportView implements FromView {
+	class DataExportView implements FromView, WithHeadings{
 		private $rowItems;
+		private $columnHeaders;
+
+		/**
+		 * DataExportView constructor.
+		 * @param $rowItems
+		 * @param $columnHeaders
+		 */
+		public function __construct($rowItems, $columnHeaders) {
+			$this->rowItems = $rowItems;
+			$this->columnHeaders = $columnHeaders;
+		}
 
 
 		/** @return View **/
 		public function view(): View {
 			return view('exports.table', [
-				'rowItems' => $this->rowItems
+				'rowItems' => $this->rowItems,
+				'columnHeaders'=>$this->columnHeaders
 			]);
 		}
-
-		/** DataExportView constructor. @param $rowItems **/
-		public function __construct($rowItems) {
-			$this->rowItems = $rowItems;
+		
+		/* @return array */
+		public function headings(): array {
+			return  $this->columnHeaders;
 		}
-
-		/**
-		 * @return mixed
-		 */
-		public function getRowItems() {
-			return $this->rowItems;
-		}
-
-		/**
-		 * @param mixed $rowItems
-		 * @return DataExportView
-		 */
-		public function setRowItems($rowItems) {
-			$this->rowItems = $rowItems;
-			return $this;
-		}
-
-
 
 	}

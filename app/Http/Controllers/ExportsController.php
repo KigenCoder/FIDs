@@ -2,6 +2,7 @@
 
 	namespace App\Http\Controllers;
 
+	use App\Exports\TestExportView;
 	use DB;
 	use stdClass;
 	use DateTime;
@@ -10,7 +11,7 @@
 	use Maatwebsite\Excel\Facades\Excel;
 	use App\Http\Requests\ExportRequest;
 
-	class ExportsController extends Controller{
+	class ExportsController extends Controller {
 		/**
 		 * Display a listing of the resource.
 		 *
@@ -81,8 +82,6 @@
 			}
 
 			$markets = $this->getMarkets($system_id);
-
-
 			$startMonth = $request->all()['startMonth'];
 			$startYear = $request->all()['startYear'];
 			$endYear = $request->has('endYear') ? $input['endYear'] : NULL;
@@ -97,12 +96,20 @@
 					$rowItems[] = $marketData;
 				}
 			}
+
 			//dd($rowItems);
 			$data = array();
+			$columnHeaders = array("Region", "District", "Market", "Year", "Month");
+			$indicators = $this->getIndicatorList();
+			foreach ($indicators as $indicator) {
+				array_push($columnHeaders, $indicator->indicator_business_name);
+			}
+
 			$data['rowItems'] = $rowItems;
-			//$exportView = new DataExportView($rowItems);
-			Excel::download(new DataExportView($rowItems), 'market_data.csv');
+			$data['columnHeaders'] = $columnHeaders;
+
 			//return view('exports.table', $data);
+			return Excel::download(new DataExportView($rowItems, $columnHeaders), 'market_data.xlsx');
 		}
 
 
@@ -156,13 +163,39 @@
 				$query .= "WHERE market_id = $marketId ";
 				$query .= "AND m.year_name = $year_name AND m.month_id = $month_id ";
 				$query .= "GROUP BY i.indicator_business_name ";
-				$rowCellItems = DB::SELECT(DB::raw($query));
+				$results = DB::SELECT(DB::raw($query));
 
-         $dateObject = DateTime::createFromFormat('!m', $month_id);
-         $monthName = $dateObject->format('F');
+
+				$dateObject = DateTime::createFromFormat('!m', $month_id);
+				$monthName = $dateObject->format('F');
 
 				//If there is data
-				if (count($rowCellItems) > 0) {
+				if (count($results) > 0) {
+					/*Order indicators to follow a pre-defined sequence ASC */
+					$indicators = $this->getIndicatorList();
+
+					foreach ($indicators as $indicator) {
+						$indicator_business_name = $indicator->indicator_business_name;
+						$indicator_present = false;
+						$cellData = new stdClass();
+						foreach ($results as $row) {
+							if (strcasecmp($row->indicator_business_name, $indicator_business_name) == 0) {
+								$indicator_present = true;
+								$cellData->indicator_business_name = $row->indicator_business_name;
+								$cellData->price = $row->price;
+								break;
+							}
+						}
+
+						if (!$indicator_present) {
+							//If indicator is absent
+							$cellData->indicator_business_name = $indicator_business_name;
+							$cellData->price = "";
+						}
+
+						$rowCellItems[] = $cellData;
+					}
+
 					$dataRowItem->region = $market->region_name;
 					$dataRowItem->district = $market->district_name;
 					$dataRowItem->market = $market->market_name;
@@ -173,7 +206,14 @@
 					$dataRowItems[] = $dataRowItem;
 				}
 			}
+
 			return $dataRowItems;
+		}
+
+		function getIndicatorList() {
+			$query = "SELECT i.indicator_business_name FROM indicators i ORDER BY i.indicator_business_name ";
+			$indicators = DB::SELECT(DB::raw($query));
+			return $indicators;
 		}
 
 
