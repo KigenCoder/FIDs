@@ -34,8 +34,8 @@
     methods: {
       savePrice: function () {
         if (!isNaN(parseInt(this.newPrice)) && parseInt(this.newPrice) > 0) {
-          this.$store.commit('data_cleaning/priceMutation', this.newPrice);
-          this.$store.commit('data_cleaning/priceIdMutation', this.data_item_id)
+           this.$store.commit('data_cleaning/priceMutation', this.newPrice);
+           this.$store.commit('data_cleaning/priceIdMutation', this.data_item_id)
           this.$store.dispatch('data_cleaning/updateData')
         }
       }

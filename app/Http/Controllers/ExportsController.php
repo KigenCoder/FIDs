@@ -2,14 +2,17 @@
 
 	namespace App\Http\Controllers;
 
-	use App\Exports\TestExportView;
+	use App\Exports\MarketDataExport;
 	use DB;
+
+	use Illuminate\Support\Facades\Session;
 	use stdClass;
 	use DateTime;
 	use Illuminate\Http\Request;
-	use App\Exports\DataExportView;
 	use Maatwebsite\Excel\Facades\Excel;
 	use App\Http\Requests\ExportRequest;
+	use Symfony\Component\Process\Process;
+
 
 	class ExportsController extends Controller {
 		/**
@@ -66,13 +69,10 @@
 
 		public function store(ExportRequest $request) {
 			$input = $request->all();
-
-
 			//Get markets
 			$system_id = NULL;
 			$marketTypeId = NULL;
 			if ($request->has('marketType')) {
-
 				$marketTypeId = $input['marketType'];
 				switch ($marketTypeId) {
 					case 1:
@@ -84,15 +84,12 @@
 						break;
 				}
 			}
-
 			$markets = $this->getMarkets($system_id);
 			$startMonth = $request->all()['startMonth'];
 			$startYear = $request->all()['startYear'];
 			$endYear = $request->has('endYear') ? $input['endYear'] : NULL;
 			$endMonth = $request->has('endMonth') ? $input['endMonth'] : NULL;
-
 			$rowItems = array();
-
 			foreach ($markets as $market) {
 				//Get data for the given month
 				$marketData = $this->getMarketData($market, $startMonth, $startYear, $endMonth, $endYear, $marketTypeId);
@@ -101,19 +98,26 @@
 				}
 			}
 
-			//dd($rowItems);
-			$data = array();
 			$columnHeaders = array("Region", "District", "Market", "Market Type", "Year", "Month");
 			$indicators = $this->getIndicatorList($marketTypeId);
 			foreach ($indicators as $indicator) {
 				array_push($columnHeaders, $indicator->indicator_business_name);
 			}
 
-			$data['rowItems'] = $rowItems;
-			$data['columnHeaders'] = $columnHeaders;
+			$process = new Process('Exporting market data....!');
+			$process->start();
+			//Session::flash('message', 'Hold on tight. Your file is being processed');
 
+			Session::flush('This is going down bruh....!!!');
+
+			//dd($rowItems);
+			//	$data = array();
+			//$data['rowItems'] = $rowItems;
+			//$data['columnHeaders'] = $columnHeaders;
+			//dd($data);
 			//return view('exports.table', $data);
-			return Excel::download(new DataExportView($columnHeaders, $rowItems), 'market_data.xlsx');
+			return Excel::download(new MarketDataExport($columnHeaders, $rowItems), 'market_data.xlsx');
+
 		}
 
 

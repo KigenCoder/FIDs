@@ -9,6 +9,7 @@ const state = {
   priceId: null,
   updatedPrice: null,
   refresh: false,
+  loadState:0,
 }
 
 const mutations = {
@@ -44,24 +45,28 @@ const mutations = {
     state.updatedPrice = updatedPrice
   },
 
-  refreshPage(state, refresh){
+
+  refreshPage(state, refresh) {
     state.refresh = refresh
-    console.log(state.refresh)
+    //console.log(state.refresh)
   },
 
 }
 const actions = {
   loadMarkets({commit}) {
+    commit('utils/loadingStateMutation', true, { root: true })
     axios
       .post('./api/cleaning_markets', {
         market_type_id: state.marketTypeId
       })
       .then(response => {
+        commit('utils/loadingStateMutation', false, { root: true })
         commit('marketsMutation', response.data)
       })
   },
 
   loadMarketData({commit}) {
+    commit('utils/loadingStateMutation', true, { root: true })
     axios
       .post('./api/cleaning_data', {
         market_type_id: state.marketTypeId,
@@ -70,18 +75,22 @@ const actions = {
         market_id: state.marketId,
       })
       .then(response => {
+        commit('utils/loadingStateMutation', false, { root: true })
         commit('marketDataMutation', response.data)
+        //console.log(state.market_data)
       })
   },
 
 
-  updateData() {
+  updateData({commit}) {
+    commit('utils/loadingStateMutation', true, { root: true })
     axios
       .post('./api/update_data', {
         price_id: state.priceId,
         price: state.updatedPrice,
       })
-      .then(response=>{
+      .then(response => {
+        commit('utils/loadingStateMutation', false, { root: true })
         console.log(response.data);
         //alert(response.data['message'])
       })

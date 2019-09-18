@@ -68,22 +68,18 @@
     methods: {
 
       periodSelected() {
-
         //Start and end periods are correct - Commit to store
         let startYear = this.selectedStartPeriod
         let endYear = this.selectedEndPeriod
 
-
         //Check to see if start year is more than end year
         if (this.selectedStartPeriod <= this.selectedEndPeriod) {
-
           this.$store.commit('monthly_analysis/startYearMutation', startYear)
           this.$store.commit('monthly_analysis/endYearMutation', endYear)
 
           //Get marketID and IndicatorID from store
           let marketIds = this.$store.getters['monthly_analysis/getMarketIds']
           let indicatorId = this.$store.getters['monthly_analysis/getIndicatorId']
-
 
           if (indicatorId && marketIds) {
             // Indicator and Market good to go - Fetch data for given period e.g 2015 - 2019

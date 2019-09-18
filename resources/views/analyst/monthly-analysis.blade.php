@@ -3,6 +3,7 @@
 @section('content')
     <div id="app">
         <div class="tile is-parent is-fullwidth">
+
             <!--Dataset and Indicators -->
             <div class="tile is-child is-vertical box">
                 <div class="tile is-child is-vertical">
@@ -53,6 +54,7 @@
                 </div>
             </div>
         </div>
+
 
 
         <div class="tile is-parent">

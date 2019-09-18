@@ -58,16 +58,20 @@ const mutations = {
 }
 const actions = {
   loadMarkets({commit}) {
+    commit('utils/loadingStateMutation', true, { root: true })
     axios
       .post('./api/cleaning_markets', {
         market_type_id: state.marketTypeId
       })
       .then(response => {
         commit('marketsMutation', response.data)
+        commit('utils/loadingStateMutation', false, { root: true })
       })
   },
 
   loadMarketIndicators({commit}) {
+    commit('utils/loadingStateMutation', true, { root: true })
+
     axios
       .post('./api/market_indicators', {
         market_type_id: state.marketTypeId,
@@ -76,6 +80,7 @@ const actions = {
         market_id: state.marketId,
       })
       .then(response => {
+        commit('utils/loadingStateMutation', false, { root: true })
         commit('marketIndicatorsMutation', response.data)
         //console.log(state.marketIndicators);
       })

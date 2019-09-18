@@ -24,7 +24,7 @@
 				'startMonth' => 'required',
 				'startYear' => 'required|numeric',
 				//'marketType' => 'required',
-				'endYear' => 'gte:startYear',
+				//'endYear' => 'gte:startYear',
 
 
 			];
@@ -37,10 +37,10 @@
 		 */
 		public function messages() {
 			return [
-				'startMonth.required' => 'Please select start month',
-				'startYear.required' => 'Please select start year',
+				'startMonth.required' => 'Please select month',
+				'startYear.required' => 'Please select year',
 				//'marketType.required' => 'Please select market type',
-				'endYear.gte'=>'End year must be greater or equal to start year',
+				//'endYear.gte'=>'End year must be greater or equal to start year',
 			];
 		}
 	}

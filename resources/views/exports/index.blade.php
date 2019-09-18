@@ -43,43 +43,8 @@
                 </div>
 
 
-                <div class="field is-horizontal">
-                    <div class="field-label is-normal">
-                        <label class="label">To</label>
-                    </div>
-                    <div class="field-body">
-                        <div class="field">
 
-                            <p class="control is-expanded has-icons-left">
-                            <div class="select is-fullwidth">
-                                <select name="endMonth">
-                                    <option value="" disabled selected>month</option>
-                                    @for($i=0; $i<count($months); $i++)
-                                        <option value="{{$i+1}}">{{$months[$i]}}</option>
-                                    @endfor
-                                </select>
-                            </div>
-                            </p>
-                            <p><span class="is-size-7 is-italic">*Optional</span></p>
-                        </div>
 
-                        <div class="field">
-                            <p class="control is-expanded has-icons-left has-icons-right">
-
-                            <div class="select is-fullwidth">
-                                <select name="endYear">
-                                    <option value="" disabled selected>year</option>
-                                    @foreach($years as $year)
-                                        <option value="{{$year->year_name}}">{{$year->year_name}}</option>
-                                    @endforeach
-                                </select>
-
-                            </div>
-                            </p>
-                            <p><span class="is-size-7 is-italic">*Optional</span></p>
-                        </div>
-                    </div>
-                </div>
                 <div class="field is-horizontal">
                     <div class="field-label is-normal">
                         <label class="label">Market Type</label>

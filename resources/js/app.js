@@ -2,6 +2,8 @@ require('./bootstrap');
 import Vue from 'vue';
 import {store} from "./store/index.js"
 import VueApexCharts from 'vue-apexcharts'
+import VueSpinners from 'vue-spinners'
+Vue.use(VueSpinners)
 
 Vue.component('apexchart', VueApexCharts)
 Vue.component('zones', require('./components/analysis/Zones.vue').default);
@@ -29,6 +31,12 @@ Vue.component('entry_market_type', require('./components/DataEntry/EntryMarketTy
 Vue.component('data_entry_markets', require('./components/DataEntry/DataEntryMarkets.vue').default);
 Vue.component('entry_month_years', require('./components/DataEntry/EntryMonthYears.vue').default);
 Vue.component('data_entry_table', require('./components/DataEntry/DataEntryTable.vue').default);
+Vue.component('spinner',require('./components/utils/Spinner.vue').default)
+
+
+
+
+
 
 
 
@@ -38,6 +46,7 @@ var app = new Vue({
     store,
     data() {
         return {}
-    }
+    },
+
 });
 

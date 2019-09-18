@@ -1,6 +1,7 @@
 <template>
-  <div class="tile box is-parent is-vertical">
-    <table class="table table is-narrow is-bordered is-stripped small-font is-size-7">
+  <div class="container">
+    <spinner></spinner>
+    <table class="table table is-fullwidth is-bordered is-stripped small-font is-size-7">
       <caption style="color: blue">
         <strong>{{getIndicatorName}}</strong>
       </caption>
@@ -39,6 +40,7 @@
 </template>
 
 <script>
+
   import {mapState, mapGetters} from 'vuex'
   import DataCell from "./PriceDataCell.vue";
   import RowBoundary from "./RowBoundary.vue"
@@ -51,6 +53,19 @@
   import SixMonthMax from "./SixMonthMax.vue"
   import SixMonthMin from "./SixMonthMin.vue"
   import SixMonthDiff from "./SixMonthDiff.vue"
+  import VueLoading from 'vuejs-loading-plugin'
+
+
+  // overwrite defaults
+  Vue.use(VueLoading, {
+    dark: true, // default false
+    text: 'Fuck.....!!!!!', // default 'Loading'
+    loading: false, // default false
+    //customLoader: myVueComponent, // replaces the spinner and text with your own
+    background: 'rgb(255,255,255)', // set custom background
+    classes: ['myclass'] // array, object or string
+  })
+
 
 
   export default {
@@ -99,6 +114,10 @@
 
       }
     },
+
+    mounted() {
+      //this.$loading(true)
+    }
 
   }
 </script>

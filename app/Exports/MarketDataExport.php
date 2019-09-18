@@ -2,13 +2,18 @@
 
 	namespace App\Exports;
 
+	use Illuminate\Contracts\Queue\ShouldQueue;
 	use Illuminate\Contracts\View\View;
+	use Maatwebsite\Excel\Concerns\Exportable;
 	use Maatwebsite\Excel\Concerns\FromView;
 
 
-	class DataExportView implements FromView{
+	class MarketDataExport implements FromView, ShouldQueue {
+		use Exportable;
+
 		private $rowItems;
 		private $columnHeaders;
+
 
 		/**
 		 * DataExportView constructor.

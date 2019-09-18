@@ -1,3 +1,5 @@
+import {consoleError} from "vuetify/lib/util/console";
+
 const state = {
   zones: [],
   regions: [],
@@ -26,6 +28,7 @@ const state = {
   tot_first_indicator: '',
   tot_second_indicator: '',
   tot_market_ids: null,
+  loading: false,
 }
 
 const mutations = {
@@ -139,7 +142,8 @@ const mutations = {
 
   marketSystemMutation(state, marketSystemType) {
     state.marketSystemType = marketSystemType
-  }
+  },
+
 
 
 }
@@ -151,12 +155,13 @@ const actions = {
       .get('./api/zones')
       .then(response => {
         commit('zonesMutation', response.data)
+        //commit('stopLoading')
       })
   },
 
   //Fetch Regions
   loadRegions({commit}) {
-
+    commit('utils/loadingStateMutation', true, { root: true })
     axios
       .post('api/regions', {
         zone_id: state.zone_id
@@ -164,11 +169,13 @@ const actions = {
       })
       .then(response => {
         commit('regionsMutation', response.data)
+        commit('utils/loadingStateMutation', false, { root: true })
       })
   },
 
   //Fetch markets
   loadMarkets({commit}) {
+    commit('utils/loadingStateMutation', true, { root: true })
     axios
       .post('api/markets', {
         region_id: state.region_id,
@@ -176,15 +183,18 @@ const actions = {
       })
       .then(response => {
         commit('marketsMutation', response.data)
+        commit('utils/loadingStateMutation', false, { root: true })
       })
   },
 
   loadIndicators({commit}) {
+    commit('utils/loadingStateMutation', true, { root: true })
     axios
       .post('api/indicators', {
         system_id: state.marketSystemType
       })
       .then(response => {
+        commit('utils/loadingStateMutation', false, { root: true })
         commit('indicatorsMutation', response.data)
       })
   },
@@ -199,6 +209,7 @@ const actions = {
   },
 
   loadData({commit}) {
+    commit('utils/loadingStateMutation', true, { root: true })
     axios
       .post('./api/analysis_data', {
         'indicator_id': state.indicator_id,
@@ -207,12 +218,13 @@ const actions = {
         'end_year': state.end_year,
       })
       .then(response => {
+        commit('utils/loadingStateMutation', false, { root: true })
         commit('analysisDataMutation', response.data)
-        //console.log("Data: " +response.data)
       })
   },
 
   loadMetaData({commit}) {
+    commit('utils/loadingStateMutation', true, { root: true })
     axios
       .post('./api/meta_data', {
         'indicator_id': state.indicator_id,
@@ -221,12 +233,14 @@ const actions = {
         'end_year': state.end_year,
       })
       .then(response => {
-        //console.log(response.data)
+        commit('utils/loadingStateMutation', false, { root: true })
         commit('metaDataMutation', response.data)
+
       })
   },
 
   loadToTData({commit}) {
+    commit('utils/loadingStateMutation', true, { root: true })
     axios
       .post('api/tot_data', {
         'first_indicator': state.tot_first_indicator,
@@ -236,13 +250,14 @@ const actions = {
         'end_year': state.tot_end_year
       })
       .then(response => {
-        //console.log(response.data)
+        commit('utils/loadingStateMutation', false, { root: true })
         commit('totAnalysisDataMutation', response.data)
       })
 
   },
 
   loadToTMetaData({commit}) {
+    commit('utils/loadingStateMutation', true, { root: true })
     axios
       .post('api/tot_meta_data', {
         'first_indicator': state.tot_first_indicator,
@@ -252,8 +267,8 @@ const actions = {
         'end_year': state.tot_end_year
       })
       .then(response => {
+        commit('utils/loadingStateMutation', false, { root: true })
         commit('totMetaDataMutation', response.data)
-        //console.log(response.data)
       })
   },
 
@@ -272,9 +287,9 @@ const getters = {
   getToTSecondIndicator: state => state.tot_second_indicator,
   getIndicatorName: state => state.indicator_name,
   getAnalysisData: state => state.analysis_data,
-  getToTAnalysisData:state => state.tot_data,
+  getToTAnalysisData: state => state.tot_data,
   getChartData: state => state.chart_data,
-  getToTChartData: state=>state.tot_chart_data,
+  getToTChartData: state => state.tot_chart_data,
   getStartYear: state => state.start_year,
   getEndYear: state => state.end_year,
   getToTStartYear: state => state.tot_start_year,
@@ -282,6 +297,7 @@ const getters = {
   getMetaData: state => state.meta_data,
   getMarketSystemType: state => state.marketSystemType,
   getShowChartData: state => state.show_chart_data,
+  getLoadState: state => state.loadState,
 }
 
 export default {

@@ -1,5 +1,6 @@
 <template>
   <div class="container" :key="componentKey">
+    <spinner></spinner>
     <table v-if="showTable" class="table is-bordered is-hoverable is-fullwidth small-font is-size-7">
       <th>INDICATOR</th>
       <th>WEEK 1</th>
@@ -47,15 +48,21 @@
     },
     mounted() {
       this.$store.subscribe((mutation, state) => {
+        let marketIndicatorsSize = state.data_entry.marketIndicators.length
         switch (mutation.type) {
           case 'data_entry/refreshPage':
             if(state.data_entry.refresh){
-              this.forceRerender();
+
+              if(marketIndicatorsSize>0){
+                //console.log('Force rerender')
+                this.forceRerender();
+              }
+
             }
             break
 
           case 'data_entry/marketIndicatorsMutation':
-            if (state.data_entry.marketIndicators.length > 0) {
+            if (marketIndicatorsSize  > 0) {
               this.showTable = true
               break
             }

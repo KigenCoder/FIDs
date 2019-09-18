@@ -87,7 +87,6 @@
       yearSelected: function () {
         this.$store.commit('data_entry/yearNameMutation', this.year_name)
         this.$store.commit('data_entry/refreshPage', true)
-        console.log(this.$store.getters['data_entry/refre'])
         let monthId = this.$store.getters['data_entry/getMonthId']
         let marketId = this.$store.getters['data_entry/getMarketId']
 
