@@ -94,7 +94,7 @@
 						//get data values
 						$dataQuery = "SELECT m.id, m.week, m.price, m.supply_id, s.supply ";
 						$dataQuery .= "FROM market_data m ";
-						$dataQuery .= "JOIN supply s ON s.id = m.supply_id ";
+						$dataQuery .= "LEFT JOIN supply s ON s.id = m.supply_id ";
 						$dataQuery .= "WHERE m.month_id =$month_id ";
 						$dataQuery .= "AND m.year_name = $year_name AND m.indicator_id = $indicator_id ";
 						$dataQuery .= "AND m.market_id = $market_id ";

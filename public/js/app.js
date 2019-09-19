@@ -2023,9 +2023,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     var _this = this;
 
     this.$store.subscribe(function (mutation, state) {
-      var marketDataLength = state.data_cleaning;
-      var refresh = state.data_cleaning.refresh;
-
+      //let marketDataLength = state.data_cleaning
+      //let refresh = state.data_cleaning.refresh
       switch (mutation.type) {
         case 'data_cleaning/marketDataMutation':
           if (state.data_cleaning.market_data.length > 0) {
@@ -2935,10 +2934,22 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      isActive: '',
       showChart: false,
       series: [],
       options: {
@@ -3011,7 +3022,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
               _this.series.push(seriesItem);
             }
 
-            _this.showChart = true;
+            _this.isActive = 'is-active';
 
             _this.$store.commit('monthly_analysis/showToTChartDataMutation', null);
 
@@ -3062,6 +3073,9 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+//
+//
+//
 //
 //
 //
@@ -3471,8 +3485,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
     },
     showChartData: function showChartData() {
-      var chartData = this.$store.getters['monthly_analysis/getToTChartData'];
-      console.log(chartData);
+      var chartData = this.$store.getters['monthly_analysis/getToTChartData']; //console.log(chartData);
 
       if (this.selected.length > 0 && chartData.length > 0) {
         //Display chart data
@@ -4686,7 +4699,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -5019,7 +5031,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "spinner",
   data: function data() {
@@ -5027,8 +5038,7 @@ __webpack_require__.r(__webpack_exports__);
       isLoading: false,
       isActive: '',
       height: '400',
-      width: '400',
-      color: '#333'
+      width: '400'
     };
   },
   mounted: function mounted() {
@@ -24760,24 +24770,55 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm.showChart
-    ? _c(
-        "div",
-        { staticClass: "tile is-child" },
-        [
-          _c("apexchart", {
-            attrs: {
-              width: "90%",
-              height: "80%",
-              type: "line",
-              options: _vm.options,
-              series: _vm.series
-            }
+  return _c(
+    "div",
+    {
+      staticClass: "modal modal-full-screen modal-fx-fadeInScale",
+      class: _vm.isActive,
+      attrs: { id: "modal-fadeInScale-fs" }
+    },
+    [
+      _c("div", { staticClass: "modal-content modal-card" }, [
+        _c("header", { staticClass: "modal-card-head" }, [
+          _c("p", { staticClass: "modal-card-title" }, [_vm._v("ToT Chart")]),
+          _vm._v(" "),
+          _c("button", {
+            staticClass: "modal-button-close delete",
+            attrs: { "aria-label": "close" },
+            on: { click: _vm.closeModal }
           })
-        ],
-        1
-      )
-    : _vm._e()
+        ]),
+        _vm._v(" "),
+        _c(
+          "section",
+          { staticClass: "modal-card-body" },
+          [
+            _c("apexchart", {
+              attrs: {
+                width: "90%",
+                height: "80%",
+                type: "line",
+                options: _vm.options,
+                series: _vm.series
+              }
+            })
+          ],
+          1
+        ),
+        _vm._v(" "),
+        _c("footer", { staticClass: "modal-card-foot" }, [
+          _c(
+            "button",
+            {
+              staticClass: "modal-button-close button",
+              on: { click: _vm.closeModal }
+            },
+            [_vm._v("Cancel")]
+          )
+        ])
+      ])
+    ]
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -24802,66 +24843,77 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c(
-    "table",
-    { staticClass: "table is-fullwidth is-bordered is-stripped is-size-7 " },
+    "div",
+    { staticClass: "container" },
     [
-      _c("caption", { staticStyle: { color: "blue" } }, [
-        _c("strong", [_vm._v(_vm._s(_vm.getIndicatorName))])
-      ]),
-      _vm._v(" "),
-      _c("thead", [
-        _c(
-          "tr",
-          _vm._l(_vm.tableHeader, function(th) {
-            return _c("th", [_vm._v(_vm._s(th))])
-          }),
-          0
-        )
-      ]),
+      _c("spinner"),
       _vm._v(" "),
       _c(
-        "tbody",
+        "table",
+        {
+          staticClass: "table is-fullwidth is-bordered is-stripped is-size-7 "
+        },
         [
-          _vm._l(_vm.tot_data, function(totData) {
-            return _c(
+          _c("caption", { staticStyle: { color: "blue" } }, [
+            _c("strong", [_vm._v(_vm._s(_vm.getIndicatorName))])
+          ]),
+          _vm._v(" "),
+          _c("thead", [
+            _c(
               "tr",
-              [
-                _c("td", [_vm._v(_vm._s(totData.year))]),
-                _vm._v(" "),
-                _vm._l(totData.marketPrices, function(priceData, index) {
-                  return _c("data-cell", {
-                    key: index,
-                    attrs: { data: priceData }
-                  })
-                })
-              ],
-              2
+              _vm._l(_vm.tableHeader, function(th) {
+                return _c("th", [_vm._v(_vm._s(th))])
+              }),
+              0
             )
-          }),
+          ]),
           _vm._v(" "),
-          _c("RowBoundary"),
-          _vm._v(" "),
-          _c("monthly-average"),
-          _vm._v(" "),
-          _c("preceding-months"),
-          _vm._v(" "),
-          _c("same-months"),
-          _vm._v(" "),
-          _c("PercentageOfLTM"),
-          _vm._v(" "),
-          _c("TwelveMonthMax"),
-          _vm._v(" "),
-          _c("TwelveMonthMin"),
-          _vm._v(" "),
-          _c("SixMonthMax"),
-          _vm._v(" "),
-          _c("SixMonthMin"),
-          _vm._v(" "),
-          _c("SixMonthDiff")
-        ],
-        2
+          _c(
+            "tbody",
+            [
+              _vm._l(_vm.tot_data, function(totData) {
+                return _c(
+                  "tr",
+                  [
+                    _c("td", [_vm._v(_vm._s(totData.year))]),
+                    _vm._v(" "),
+                    _vm._l(totData.marketPrices, function(priceData, index) {
+                      return _c("data-cell", {
+                        key: index,
+                        attrs: { data: priceData }
+                      })
+                    })
+                  ],
+                  2
+                )
+              }),
+              _vm._v(" "),
+              _c("RowBoundary"),
+              _vm._v(" "),
+              _c("monthly-average"),
+              _vm._v(" "),
+              _c("preceding-months"),
+              _vm._v(" "),
+              _c("same-months"),
+              _vm._v(" "),
+              _c("PercentageOfLTM"),
+              _vm._v(" "),
+              _c("TwelveMonthMax"),
+              _vm._v(" "),
+              _c("TwelveMonthMin"),
+              _vm._v(" "),
+              _c("SixMonthMax"),
+              _vm._v(" "),
+              _c("SixMonthMin"),
+              _vm._v(" "),
+              _c("SixMonthDiff")
+            ],
+            2
+          )
+        ]
       )
-    ]
+    ],
+    1
   )
 }
 var staticRenderFns = []
@@ -26644,8 +26696,7 @@ var render = function() {
               attrs: {
                 loading: _vm.isLoading,
                 height: _vm.height,
-                width: _vm.width,
-                color: _vm.color
+                width: _vm.width
               }
             })
           ],
@@ -43339,7 +43390,8 @@ var state = {
   month_id: null,
   year_name: null,
   indicator_id: null,
-  supply_id: null,
+  supply_id: '3',
+  //Default to normal supply
   marketId: null,
   marketTypeId: null,
   price: null,
@@ -43390,10 +43442,10 @@ var actions = {
     axios.post('./api/cleaning_markets', {
       market_type_id: state.marketTypeId
     }).then(function (response) {
-      commit('marketsMutation', response.data);
       commit('utils/loadingStateMutation', false, {
         root: true
       });
+      commit('marketsMutation', response.data);
     });
   },
   loadMarketIndicators: function loadMarketIndicators(_ref2) {
@@ -43413,7 +43465,11 @@ var actions = {
       commit('marketIndicatorsMutation', response.data); //console.log(state.marketIndicators);
     });
   },
-  saveData: function saveData() {
+  saveData: function saveData(_ref3) {
+    var commit = _ref3.commit;
+    commit('utils/loadingStateMutation', true, {
+      root: true
+    });
     axios.post('./api/save_data', {
       year_name: state.year_name,
       month_id: state.month_id,
@@ -43423,10 +43479,17 @@ var actions = {
       price: state.price,
       supply_id: state.supply_id
     }).then(function (response) {
+      commit('utils/loadingStateMutation', false, {
+        root: true
+      });
       console.log(response.data);
     });
   },
-  updateSupplyId: function updateSupplyId() {
+  updateSupplyId: function updateSupplyId(_ref4) {
+    var commit = _ref4.commit;
+    commit('utils/loadingStateMutation', true, {
+      root: true
+    });
     axios.post('./api/supply_update', {
       year_name: state.year_name,
       month_id: state.month_id,
@@ -43434,6 +43497,9 @@ var actions = {
       indicator_id: state.indicator_id,
       supply_id: state.supply_id
     }).then(function (response) {
+      commit('utils/loadingStateMutation', false, {
+        root: true
+      });
       console.log(response.data);
     });
   }
@@ -43695,17 +43761,14 @@ var actions = {
       'start_year': state.tot_start_year,
       'end_year': state.tot_end_year
     }).then(function (response) {
-      commit('utils/loadingStateMutation', false, {
-        root: true
-      });
+      //commit('utils/loadingStateMutation', false, {root: true})
       commit('totAnalysisDataMutation', response.data);
     });
   },
   loadToTMetaData: function loadToTMetaData(_ref9) {
     var commit = _ref9.commit;
-    commit('utils/loadingStateMutation', true, {
-      root: true
-    });
+    //commit('utils/loadingStateMutation', true, {root: true})
+    //console.log('I have been called ToT Meta Data')
     axios.post('api/tot_meta_data', {
       'first_indicator': state.tot_first_indicator,
       'second_indicator': state.tot_second_indicator,
@@ -43715,7 +43778,8 @@ var actions = {
     }).then(function (response) {
       commit('utils/loadingStateMutation', false, {
         root: true
-      });
+      }); //console.log(state.loading)
+
       commit('totMetaDataMutation', response.data);
     });
   }
@@ -43819,7 +43883,11 @@ var mutations = {
   }
 };
 var actions = {};
-var getters = {};
+var getters = {
+  getLoadingState: function getLoadingState(state) {
+    return state.loading;
+  }
+};
 /* harmony default export */ __webpack_exports__["default"] = ({
   namespaced: true,
   state: state,

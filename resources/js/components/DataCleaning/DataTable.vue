@@ -1,5 +1,5 @@
 <template>
-  <div class="container" >
+  <div class="container">
     <spinner></spinner>
     <table v-if="showTable" class="table is-bordered is-hoverable is-fullwidth small-font is-size-7">
       <th>INDICATOR</th>
@@ -38,8 +38,8 @@
 
     mounted() {
       this.$store.subscribe((mutation, state) => {
-        let marketDataLength = state.data_cleaning
-        let refresh = state.data_cleaning.refresh
+        //let marketDataLength = state.data_cleaning
+        //let refresh = state.data_cleaning.refresh
         switch (mutation.type) {
           case  'data_cleaning/marketDataMutation':
             if (state.data_cleaning.market_data.length > 0) {

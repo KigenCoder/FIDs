@@ -23,6 +23,7 @@
 			if ($request->has('year_name') && $request->has('month_id')
 				&& $request->has('week') && $request->has('market_id')
 				&& $request->has('indicator_id') && $request->has('price')) {
+
 				$input = $request->all();
 				$data = array();
 				$data['year_name'] = $input['year_name'];
@@ -31,10 +32,15 @@
 				$data['market_id'] = $input['market_id'];
 				$data['indicator_id'] = $input['indicator_id'];
 				$data['price'] = $input['price'];
+				$supply_id = is_null($input['supply_id']) ? '3' : $input['supply_id'];
+				$data['supply_id'] = $supply_id;
+
+				//return json_encode($data);
 				$savedPrice = $this->savedPrice($data);
 
 				if (!$savedPrice) {
 					//Price does not exist so save it
+
 					MarketData::create($data);
 					$message = "Record saved..!";
 				} else {
@@ -60,7 +66,7 @@
 				$data['indicator_id'] = $input['indicator_id'];
 				$savedData = $this->savedPrice($data);
 				$updated = 0;
-				$update_ids = array();
+				//$update_ids = array();
 				for ($i = 0; $i < count($savedData); $i++) {
 					$fetched = MarketData::findOrFail($savedData[$i]->id);
 					$fetched->supply_id = $input['supply_id'];

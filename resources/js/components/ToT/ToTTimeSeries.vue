@@ -78,8 +78,6 @@
               }
             }
           }
-
-
           //Commit it to the store
           this.$store.commit('monthly_analysis/totChartDataMutation', chartData)
 
@@ -89,7 +87,7 @@
 
       showChartData() {
         let chartData = this.$store.getters['monthly_analysis/getToTChartData']
-        console.log(chartData);
+        //console.log(chartData);
 
         if (this.selected.length > 0 && chartData.length > 0) {
           //Display chart data

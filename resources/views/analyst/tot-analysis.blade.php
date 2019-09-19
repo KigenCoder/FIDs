@@ -62,18 +62,11 @@
                 </div>
 
             </div>
+        </div>
 
-
-            <div class="column is-full">
-                <!-- ToT Data -->
-                <div class="tile is-parent">
-                    <tot_data></tot_data>
-                </div>
-                <!-- ToT Chart -->
-                <div class="tile is-parent">
-                    <tot_series_chart></tot_series_chart>
-                </div>
-            </div>
+        <div class="tile is-parent">
+            <tot_data></tot_data>
+            <tot_series_chart></tot_series_chart>
         </div>
     </div>
 @stop

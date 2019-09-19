@@ -6,7 +6,7 @@ const state = {
   month_id: null,
   year_name: null,
   indicator_id: null,
-  supply_id: null,
+  supply_id: '3', //Default to normal supply
   marketId: null,
   marketTypeId: null,
   price: null,
@@ -64,14 +64,14 @@ const actions = {
         market_type_id: state.marketTypeId
       })
       .then(response => {
-        commit('marketsMutation', response.data)
         commit('utils/loadingStateMutation', false, { root: true })
+        commit('marketsMutation', response.data)
+
       })
   },
 
   loadMarketIndicators({commit}) {
     commit('utils/loadingStateMutation', true, { root: true })
-
     axios
       .post('./api/market_indicators', {
         market_type_id: state.marketTypeId,
@@ -86,7 +86,8 @@ const actions = {
       })
   },
 
-  saveData() {
+  saveData({commit}) {
+    commit('utils/loadingStateMutation', true, { root: true })
     axios
       .post('./api/save_data', {
         year_name: state.year_name,
@@ -98,11 +99,13 @@ const actions = {
         supply_id: state.supply_id,
       })
       .then(response => {
+        commit('utils/loadingStateMutation', false, { root: true })
         console.log(response.data);
       })
   },
 
-  updateSupplyId() {
+  updateSupplyId({commit}) {
+    commit('utils/loadingStateMutation', true, { root: true })
     axios
       .post('./api/supply_update', {
         year_name: state.year_name,
@@ -112,6 +115,7 @@ const actions = {
         supply_id: state.supply_id
       })
       .then(response => {
+        commit('utils/loadingStateMutation', false, { root: true })
         console.log(response.data)
       })
   },

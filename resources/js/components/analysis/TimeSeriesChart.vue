@@ -1,5 +1,4 @@
 <template>
-
   <div class="modal modal-full-screen modal-fx-fadeInScale" :class="isActive" id="modal-fadeInScale-fs">
     <div class="modal-content modal-card">
       <header class="modal-card-head">

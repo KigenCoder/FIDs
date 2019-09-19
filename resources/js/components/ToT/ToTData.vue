@@ -1,4 +1,6 @@
 <template>
+  <div class="container">
+    <spinner></spinner>
     <table class="table is-fullwidth is-bordered is-stripped is-size-7 ">
       <caption style="color: blue">
         <strong>{{getIndicatorName}}</strong>
@@ -30,6 +32,7 @@
       <SixMonthDiff></SixMonthDiff>
       </tbody>
     </table>
+  </div>
 </template>
 
 <script>

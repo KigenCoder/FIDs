@@ -1,14 +1,25 @@
 <template>
+  <div class="modal modal-full-screen modal-fx-fadeInScale" :class="isActive" id="modal-fadeInScale-fs">
+    <div class="modal-content modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">ToT Chart</p>
+        <button v-on:click="closeModal" class="modal-button-close delete" aria-label="close"></button>
+      </header>
+      <section class="modal-card-body">
 
-  <div class="tile is-child" v-if="showChart">
-    <apexchart
-        width="90%"
-        height="80%"
-        type="line"
-        :options="options"
-        :series="series">
+        <apexchart
+            width="90%"
+            height="80%"
+            type="line"
+            :options="options"
+            :series="series">
 
-    </apexchart>
+        </apexchart>
+      </section>
+      <footer class="modal-card-foot">
+        <button v-on:click="closeModal" class="modal-button-close button">Cancel</button>
+      </footer>
+    </div>
   </div>
 </template>
 
@@ -20,6 +31,7 @@
 
     data() {
       return {
+        isActive: '',
         showChart: false,
         series: [],
         options: {
@@ -99,7 +111,7 @@
                 }
                 this.series.push(seriesItem)
               }
-              this.showChart = true
+              this.isActive = 'is-active'
               this.$store.commit('monthly_analysis/showToTChartDataMutation', null)
               break;
             }

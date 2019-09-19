@@ -145,7 +145,6 @@ const mutations = {
   },
 
 
-
 }
 
 const actions = {
@@ -161,7 +160,7 @@ const actions = {
 
   //Fetch Regions
   loadRegions({commit}) {
-    commit('utils/loadingStateMutation', true, { root: true })
+    commit('utils/loadingStateMutation', true, {root: true})
     axios
       .post('api/regions', {
         zone_id: state.zone_id
@@ -169,13 +168,13 @@ const actions = {
       })
       .then(response => {
         commit('regionsMutation', response.data)
-        commit('utils/loadingStateMutation', false, { root: true })
+        commit('utils/loadingStateMutation', false, {root: true})
       })
   },
 
   //Fetch markets
   loadMarkets({commit}) {
-    commit('utils/loadingStateMutation', true, { root: true })
+    commit('utils/loadingStateMutation', true, {root: true})
     axios
       .post('api/markets', {
         region_id: state.region_id,
@@ -183,18 +182,18 @@ const actions = {
       })
       .then(response => {
         commit('marketsMutation', response.data)
-        commit('utils/loadingStateMutation', false, { root: true })
+        commit('utils/loadingStateMutation', false, {root: true})
       })
   },
 
   loadIndicators({commit}) {
-    commit('utils/loadingStateMutation', true, { root: true })
+    commit('utils/loadingStateMutation', true, {root: true})
     axios
       .post('api/indicators', {
         system_id: state.marketSystemType
       })
       .then(response => {
-        commit('utils/loadingStateMutation', false, { root: true })
+        commit('utils/loadingStateMutation', false, {root: true})
         commit('indicatorsMutation', response.data)
       })
   },
@@ -209,7 +208,7 @@ const actions = {
   },
 
   loadData({commit}) {
-    commit('utils/loadingStateMutation', true, { root: true })
+    commit('utils/loadingStateMutation', true, {root: true})
     axios
       .post('./api/analysis_data', {
         'indicator_id': state.indicator_id,
@@ -218,13 +217,13 @@ const actions = {
         'end_year': state.end_year,
       })
       .then(response => {
-        commit('utils/loadingStateMutation', false, { root: true })
+        commit('utils/loadingStateMutation', false, {root: true})
         commit('analysisDataMutation', response.data)
       })
   },
 
   loadMetaData({commit}) {
-    commit('utils/loadingStateMutation', true, { root: true })
+    commit('utils/loadingStateMutation', true, {root: true})
     axios
       .post('./api/meta_data', {
         'indicator_id': state.indicator_id,
@@ -233,14 +232,14 @@ const actions = {
         'end_year': state.end_year,
       })
       .then(response => {
-        commit('utils/loadingStateMutation', false, { root: true })
+        commit('utils/loadingStateMutation', false, {root: true})
         commit('metaDataMutation', response.data)
 
       })
   },
 
   loadToTData({commit}) {
-    commit('utils/loadingStateMutation', true, { root: true })
+    commit('utils/loadingStateMutation', true, {root: true})
     axios
       .post('api/tot_data', {
         'first_indicator': state.tot_first_indicator,
@@ -250,14 +249,15 @@ const actions = {
         'end_year': state.tot_end_year
       })
       .then(response => {
-        commit('utils/loadingStateMutation', false, { root: true })
+        //commit('utils/loadingStateMutation', false, {root: true})
         commit('totAnalysisDataMutation', response.data)
       })
 
   },
 
   loadToTMetaData({commit}) {
-    commit('utils/loadingStateMutation', true, { root: true })
+    //commit('utils/loadingStateMutation', true, {root: true})
+    //console.log('I have been called ToT Meta Data')
     axios
       .post('api/tot_meta_data', {
         'first_indicator': state.tot_first_indicator,
@@ -267,7 +267,8 @@ const actions = {
         'end_year': state.tot_end_year
       })
       .then(response => {
-        commit('utils/loadingStateMutation', false, { root: true })
+        commit('utils/loadingStateMutation', false, {root: true})
+        //console.log(state.loading)
         commit('totMetaDataMutation', response.data)
       })
   },
