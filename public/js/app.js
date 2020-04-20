@@ -25946,7 +25946,7 @@ var render = function() {
               _vm._v(" "),
               _c("th", [_vm._v("WEEK 5")]),
               _vm._v(" "),
-              _c("th", [_vm._v("Average")]),
+              _c("th", [_vm._v("Last month avg")]),
               _vm._v(" "),
               _c(
                 "tbody",

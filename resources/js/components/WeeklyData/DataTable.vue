@@ -8,7 +8,7 @@
       <th>WEEK 3</th>
       <th>WEEK 4</th>
       <th>WEEK 5</th>
-      <th>Average</th>
+      <th>Last month avg</th>
       <tbody>
       <data_row_item v-for="(data_row, index) in market_data"
                      v-bind:data_row="data_row"
