@@ -38,6 +38,7 @@
 				$markets = DB::select(DB::raw($query));
 			}
 
+
 			return json_encode($markets);
 
 		}

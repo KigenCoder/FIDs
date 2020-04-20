@@ -8,6 +8,7 @@ Route::get("data-entry", "DataUpdates@data_entry");
 Route::get("data-cleaning", "DataUpdates@data_cleaning");
 Route::get("monthly-analysis", "MarketAnalysis@monthly_analysis");
 Route::get("tot", "ToTController@tot");
+Route::get('weekly-data', "WeeklyData@weekly_data");
 Route::get("scratch-pad", "DataEntry@savedPrice");
 Route::resource('export', 'ExportsController');
 

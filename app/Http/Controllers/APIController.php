@@ -52,6 +52,8 @@ class APIController extends Controller
       $markets = DB::select(DB::raw($query));
     }
 
+    //dd($markets);
+
     return json_encode($markets);
   }
 

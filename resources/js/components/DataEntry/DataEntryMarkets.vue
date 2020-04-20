@@ -4,7 +4,7 @@
       <select v-model="marketId" @change="marketSelected">
         <option value="" disabled selected>Markets</option>
         <option v-for="(market) in markets" v-bind:value="market.id">
-          {{market.market_name}}
+            {{market.market_name}}
         </option>
       </select>
     </div>

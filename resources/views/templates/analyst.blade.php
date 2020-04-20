@@ -40,6 +40,12 @@
                     <li class='has-sub'><span>{!! Html::link('tot','ToT') !!}</span></li>
                 </ul>
             </li>
+            <li class='has-sub'><a href='#'><span>WEEKLY DATA</span></a>
+                <ul>
+                    <li class='has-sub'><span>{!! Html::link('weekly-data','View') !!}</span></li>
+                    <li class='has-sub'><span>{!! Html::link('#','Download') !!}</span></li>
+                </ul>
+            </li>
             <li class='last'>{!! Html::link('export','EXPORT') !!}</li>
 
             <li class='last'>{!! Html::link('logout','LOGOUT') !!}</li>

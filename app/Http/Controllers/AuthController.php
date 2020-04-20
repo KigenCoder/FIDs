@@ -39,22 +39,20 @@ class AuthController extends Controller
         $input = $request->all();
         $email = $input["email"];
         $password = $input["password"];
+
         if (Auth::attempt(['email' => $email, 'password' => $password])) {
             // Authentication passed...
             $user_role_id = Auth::user()->user_role_id;
 
-            //dd($user_role_id);
             switch ($user_role_id) {
                 case 1:  //Admin
                     return redirect("user");
                     break;
+                case 3:
                 case 2:
                     return redirect('data-entry');
                     break;
 
-                case 3:
-                    return redirect('data-entry');
-                    break;
                 case 4: //Enumerator
                     return redirect("data/filter");
                     break;
