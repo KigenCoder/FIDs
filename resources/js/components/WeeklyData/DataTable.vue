@@ -20,52 +20,52 @@
 </template>
 
 <script>
-  import {mapState} from 'vuex';
-  import data_row_item from "./DataRowItem.vue"
+import {mapState} from 'vuex';
+import data_row_item from "./DataRow.vue"
 
-  export default {
-    name: "DataTable",
-    components: {
-      data_row_item,
-    },
+export default {
+  name: "DataTable",
+  components: {
+    data_row_item,
+  },
 
-    data() {
-      return {
-        showTable: false,
-        componentKey: 0
+  data() {
+    return {
+      showTable: false,
+      componentKey: 0
+    }
+  },
+
+  mounted() {
+    this.$store.subscribe((mutation, state) => {
+      switch (mutation.type) {
+        case  'weekly_data/marketDataMutation':
+          if (state.weekly_data.market_data.length > 0) {
+            this.showTable = true
+          }
+
+          break;
+        case 'weekly_data/refreshPage':
+          if (state.weekly_data.refresh) {
+            this.forceRerender()
+          }
+
       }
-    },
 
-    mounted() {
-      this.$store.subscribe((mutation, state) => {
-        switch (mutation.type) {
-          case  'weekly_data/marketDataMutation':
-            if (state.weekly_data.market_data.length > 0) {
-              this.showTable = true
-            }
+    })
+  },
 
-            break;
-          case 'weekly_data/refreshPage':
-            if (state.weekly_data.refresh) {
-              this.forceRerender()
-            }
+  computed: {
+    ...mapState('weekly_data', [
+      'market_data'
+    ]),
 
-        }
-
-      })
-    },
-
-    computed: {
-      ...mapState('weekly_data', [
-        'market_data'
-      ]),
-
-    },
-    methods: {
-      forceRerender() {
-        this.componentKey += 1;
-        this.$store.commit('weekly_data/refreshPage', false)
-      }
+  },
+  methods: {
+    forceRerender() {
+      this.componentKey += 1;
+      this.$store.commit('weekly_data/refreshPage', false)
     }
   }
+}
 </script>

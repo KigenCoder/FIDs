@@ -3,17 +3,25 @@
         <div class="container align-right">&copy; fao.org</div>
 </div>
 
-<!-- /container -->
 
-<!-- javascript -->
-<script src="{{asset('js/jquery.min.js')}}"></script>
 
-<script src="{{asset('js/es6-promise.auto.js')}}"></script>
+
 
 <!-- development version, includes helpful console warnings -->
-<script src="{{asset('js/vue.js')}}"></script>
+<!-- include the Vue.js framework -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.11/vue.min.js"></script>
 
+
+
+<!-- include the Vue.js framework -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.11/vue.min.js"></script>
+
+<!-- include the VeeValidate library -->
+<script src="https://cdn.jsdelivr.net/npm/vee-validate@3.3.8/dist/vee-validate.min.js"></script>
 
 <!-- Vue Javascript file -->
 <script src="{{asset('js/app.js')}}"></script>
 <script type="text/javascript" src="{{asset('js/modal-fx.min.js')}}"></script>
+
+
+

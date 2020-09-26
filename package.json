@@ -12,12 +12,13 @@
   "devDependencies": {
     "axios": "^0.19.0",
     "cross-env": "^5.1",
-    "laravel-mix": "^4.0.15",
-    "lodash": "^4.17.15",
+    "laravel-mix": "^5.0.5",
+    "lodash": "^4.17.20",
     "resolve-url-loader": "^2.3.1",
     "sass": "^1.18.0",
     "sass-loader": "^7.1.0",
     "vue-template-compiler": "^2.6.6",
+    "vuejs-form": "^1.2.9",
     "vuex": "^3.1.0"
   },
   "dependencies": {
@@ -26,6 +27,7 @@
     "chart.js": "^2.8.0",
     "es6-promise": "^4.2.6",
     "validate.js": "^0.12.0",
+    "vee-validate": "^3.4.0",
     "vue": "^2.6.10",
     "vue-apexcharts": "^1.4.0",
     "vue-chartjs": "^3.4.2",

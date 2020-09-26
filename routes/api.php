@@ -30,8 +30,7 @@ Route::post('update_data', 'DataUpdates@updateData');
 Route::post('market_indicators', 'DataUpdates@market_indicators');
 Route::post('save_data', 'DataEntry@save_data');
 Route::post('supply_update', 'DataEntry@supply_update');
-
-
+Route::post("save_weekly", "WeeklyData@save_weekly");
 
 //Route::get("scratch-pad", "ScratchPadController@index");
 //Route::get('test', 'APIController@twelveMonthMinMax');

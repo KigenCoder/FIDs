@@ -9,7 +9,6 @@
     </data_cell>
     <td v-for="blank in blankCells"></td>
     <td>{{data_row.lastMonthAverage}}</td>
-
   </tr>
 </template>
 
