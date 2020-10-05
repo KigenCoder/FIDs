@@ -3631,7 +3631,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['indicator_id', 'type'],
@@ -3639,34 +3638,52 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   data: function data() {
     return {
       price: '',
-      prices: []
+      temp: null,
+      prices: [],
+      visible: true
     };
   },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])('monthly_analysis', [])),
+  computed: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])('monthly_analysis', [])), {}, {
+    inputType: function inputType() {
+      return this.type === 'indicator' && this.visible;
+    }
+  }),
   mounted: function mounted() {},
   methods: {
     updatePriceList: function updatePriceList() {
+      /* For displaying 1000 separator */
+      this.visible = false;
+      this.temp = this.price;
+      this.price = this.thousandSeparator(this.price);
       var marketId = this.$store.getters['weekly_data_entry/getMarketId'];
       var monthId = this.$store.getters['weekly_data_entry/getMonthId'];
       var weekId = this.$store.getters["weekly_data_entry/getWeekId"];
-      var yearName = this.$store.getters['weekly_data_entry/getYearName']; //console.log("Week ID: " + weekId)
+      var yearName = this.$store.getters['weekly_data_entry/getYearName'];
+      var priceObject = {}; //Check if price is empty
 
-      var priceObject = {};
+      var marketPrice = this.temp; //console.log("Market price: " + marketPrice)
 
-      if (marketId && yearName && monthId && weekId) {
+      if (marketId && yearName && monthId && weekId && marketPrice !== '' && marketPrice !== null) {
         priceObject = {
           "market_id": marketId,
           "year_name": yearName,
           "month_id": monthId,
           "week_id": weekId,
           "indicator_id": this.indicator_id,
-          "price": this.price
+          "price": marketPrice
         };
-        var numeralPrice = +this.price; //console.log("Not a number: " + this.price)
-
-        if (Number.isInteger(numeralPrice)) {
-          this.$store.commit('weekly_data_entry/updateMarketDataMutation', priceObject);
-        }
+        this.$store.commit('weekly_data_entry/updateMarketDataMutation', priceObject);
+      }
+    },
+    onFocusText: function onFocusText() {
+      this.visible = true;
+      this.price = this.temp;
+    },
+    thousandSeparator: function thousandSeparator(amount) {
+      if (amount !== '' || amount !== undefined || amount !== 0 || amount !== '0' || amount !== null) {
+        return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      } else {
+        return amount;
       }
     }
   }
@@ -26483,7 +26500,7 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("td", [
-    _vm.type === "indicator"
+    _vm.type === "indicator" && _vm.visible === true
       ? _c("input", {
           directives: [
             {
@@ -26497,6 +26514,30 @@ var render = function() {
           domProps: { value: _vm.price },
           on: {
             blur: _vm.updatePriceList,
+            input: function($event) {
+              if ($event.target.composing) {
+                return
+              }
+              _vm.price = $event.target.value
+            }
+          }
+        })
+      : _vm._e(),
+    _vm._v(" "),
+    _vm.type === "indicator" && _vm.visible === false
+      ? _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.price,
+              expression: "price"
+            }
+          ],
+          attrs: { type: "text" },
+          domProps: { value: _vm.price },
+          on: {
+            focus: _vm.onFocusText,
             input: function($event) {
               if ($event.target.composing) {
                 return
@@ -47099,8 +47140,7 @@ var actions = {
           commit('utils/loadingStateMutation', false, {
             root: true
           });
-          alert("Saved: " + response.data.saved + " Existing:  " + response.data.existing);
-          console.log(response.data);
+          alert("Saved: " + response.data.saved + " Existing:  " + response.data.existing); //console.log(response.data);
         });
       } catch (exception) {
         console.log(exception.toLocaleString());

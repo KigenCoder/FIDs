@@ -100,6 +100,7 @@ const actions = {
 
         if (state.marketData.length > 0) {
             try {
+
                 axios
                     .post('./api/save_weekly', {
                         "market_data": JSON.stringify(state.marketData),
@@ -107,8 +108,9 @@ const actions = {
                     .then(response => {
                         commit('utils/loadingStateMutation', false, {root: true})
                         alert("Saved: " + response.data.saved + " Existing:  " + response.data.existing)
-                        console.log(response.data);
+                        //console.log(response.data);
                     })
+
 
             } catch (exception) {
                 console.log(exception.toLocaleString())
