@@ -15,11 +15,12 @@
 
 
 	class ExportsController extends Controller {
-		/**
-		 * Display a listing of the resource.
-		 *
-		 * @return \Illuminate\Http\Response
-		 */
+
+
+        public function __construct() {
+            $this->middleware("dataAnalyst");
+        }
+
 		public function index() {
 			$data = array();
 			$data['months'] = $this->getMonths();

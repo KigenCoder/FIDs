@@ -1,4 +1,4 @@
-@extends('templates.analyst')
+@extends('templates.enumerators')
 
 @section('content')
     <div id="app">
