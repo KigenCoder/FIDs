@@ -26,14 +26,8 @@
     <div id='cssmenu'>
         <ul>
 
-            <li class='has-sub'><a href='#'><span>WEEKLY DATA</span></a>
-                <ul>
-                    <li class='has-sub'><span>{!! Html::link('weekly-data-entry','Data Entry') !!}</span></li>
-                    <li class='has-sub'><span>{!! Html::link('weekly-data','View Data') !!}</span></li>
-
-                </ul>
-            </li>
-            
+            <li class='has-sub'><span>{!! Html::link('weekly-data-entry','Data Entry') !!}</span></li>
+            <li class='has-sub'><span>{!! Html::link('weekly-data','View Data') !!}</span></li>
         </ul>
     </div>
 

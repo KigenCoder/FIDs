@@ -1,14 +1,14 @@
 <template>
   <div class="container">
     <spinner></spinner>
-    <table v-if="showTable" class="table is-bordered is-hoverable is-fullwidth small-font is-size-7">
+    <table v-if="showTable" class="table table-fixed is-bordered is-hoverable is-fullwidth small-font is-size-7">
       <th>INDICATOR</th>
       <th>WEEK 1</th>
       <th>WEEK 2</th>
       <th>WEEK 3</th>
       <th>WEEK 4</th>
       <th>WEEK 5</th>
-      <th>Last month avg</th>
+      <th>Previous month avg</th>
       <tbody>
       <data_row_item v-for="(data_row, index) in market_data"
                      v-bind:data_row="data_row"

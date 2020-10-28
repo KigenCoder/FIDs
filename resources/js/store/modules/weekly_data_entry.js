@@ -57,7 +57,23 @@ const mutations = {
 
 
     updateMarketDataMutation(state, priceObject) {
-        //console.log(priceObject.indicator_id, priceObject.price)
+        //First check if object exists
+        let currentObject
+
+        for (currentObject of state.marketData) {
+
+            if (currentObject.week_id === priceObject.week_id
+                && currentObject.year_name === priceObject.year_name
+                && currentObject.month_id === priceObject.month_id
+                && currentObject.market_id === priceObject.market_id
+                && currentObject.indicator_id === priceObject.indicator_id) {
+
+                const index = state.marketData.indexOf(currentObject)
+                //Remove existing market data object
+                state.marketData.splice(index)
+            }
+        }
+
         state.marketData.push(priceObject)
 
     }
@@ -94,10 +110,8 @@ const actions = {
     },
 
 
-
     saveData({commit}) {
         commit('utils/loadingStateMutation', true, {root: true})
-
         if (state.marketData.length > 0) {
             try {
 
@@ -117,7 +131,6 @@ const actions = {
             }
 
         }
-
 
     },
 

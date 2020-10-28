@@ -1,7 +1,7 @@
 <template>
   <div class="container" :key="componentKey">
     <spinner></spinner>
-    <table v-if="showTable" class="table is-bordered is-hoverable is-fullwidth small-font is-size-7">
+    <table v-if="showTable" class="scroll-y table is-bordered is-hoverable is-fullwidth small-font is-size-7">
       <th>INDICATOR</th>
       <th>Weekly Data</th>
       <tbody>

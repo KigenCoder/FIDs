@@ -3602,6 +3602,15 @@ __webpack_require__.r(__webpack_exports__);
         return this.price;
       }
     }
+  },
+  methods: {
+    thousandSeparator: function thousandSeparator(amount) {
+      if (amount !== '' || amount !== undefined || amount !== 0 || amount !== '0' || amount !== null) {
+        return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      } else {
+        return amount;
+      }
+    }
   }
 });
 
@@ -3897,7 +3906,15 @@ __webpack_require__.r(__webpack_exports__);
       "title": "AVERAGE"
     }];
   },
-  methods: {}
+  methods: {
+    thousandSeparator: function thousandSeparator(amount) {
+      if (amount !== '' || amount !== undefined || amount !== 0 || amount !== '0' || amount !== null) {
+        return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      } else {
+        return amount;
+      }
+    }
+  }
 });
 
 /***/ }),
@@ -26475,7 +26492,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("td", [_vm._v(_vm._s(_vm.weeklyPrice))])
+  return _c("td", [_vm._v(_vm._s(_vm.thousandSeparator(_vm.weeklyPrice)))])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -26617,7 +26634,7 @@ var render = function() {
             "table",
             {
               staticClass:
-                "table is-bordered is-hoverable is-fullwidth small-font is-size-7"
+                "scroll-y table is-bordered is-hoverable is-fullwidth small-font is-size-7"
             },
             [
               _c("th", [_vm._v("INDICATOR")]),
@@ -26683,7 +26700,9 @@ var render = function() {
         return _c("td")
       }),
       _vm._v(" "),
-      _c("td", [_vm._v(_vm._s(_vm.data_row.lastMonthAverage))])
+      _c("td", [
+        _vm._v(_vm._s(_vm.thousandSeparator(_vm.data_row.lastMonthAverage)))
+      ])
     ],
     2
   )
@@ -26721,7 +26740,7 @@ var render = function() {
             "table",
             {
               staticClass:
-                "table is-bordered is-hoverable is-fullwidth small-font is-size-7"
+                "table table-fixed is-bordered is-hoverable is-fullwidth small-font is-size-7"
             },
             [
               _c("th", [_vm._v("INDICATOR")]),
@@ -26736,7 +26755,7 @@ var render = function() {
               _vm._v(" "),
               _c("th", [_vm._v("WEEK 5")]),
               _vm._v(" "),
-              _c("th", [_vm._v("Last month avg")]),
+              _c("th", [_vm._v("Previous month avg")]),
               _vm._v(" "),
               _c(
                 "tbody",
@@ -47040,6 +47059,12 @@ var getters = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 var state = {
   years: [],
   markets: [],
@@ -47090,7 +47115,28 @@ var mutations = {
     state.marketData = marketData;
   },
   updateMarketDataMutation: function updateMarketDataMutation(state, priceObject) {
-    //console.log(priceObject.indicator_id, priceObject.price)
+    //First check if object exists
+    var currentObject;
+
+    var _iterator = _createForOfIteratorHelper(state.marketData),
+        _step;
+
+    try {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
+        currentObject = _step.value;
+
+        if (currentObject.week_id === priceObject.week_id && currentObject.year_name === priceObject.year_name && currentObject.month_id === priceObject.month_id && currentObject.market_id === priceObject.market_id && currentObject.indicator_id === priceObject.indicator_id) {
+          var index = state.marketData.indexOf(currentObject); //Remove existing market data object
+
+          state.marketData.splice(index);
+        }
+      }
+    } catch (err) {
+      _iterator.e(err);
+    } finally {
+      _iterator.f();
+    }
+
     state.marketData.push(priceObject);
   }
 };
