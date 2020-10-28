@@ -26634,7 +26634,7 @@ var render = function() {
             "table",
             {
               staticClass:
-                "scroll-y table is-bordered is-hoverable is-fullwidth small-font is-size-7"
+                "table is-bordered is-hoverable is-fullwidth small-font is-size-7"
             },
             [
               _c("th", [_vm._v("INDICATOR")]),
@@ -26740,7 +26740,7 @@ var render = function() {
             "table",
             {
               staticClass:
-                "table table-fixed is-bordered is-hoverable is-fullwidth small-font is-size-7"
+                "table is-bordered is-hoverable is-fullwidth small-font is-size-7"
             },
             [
               _c("th", [_vm._v("INDICATOR")]),
