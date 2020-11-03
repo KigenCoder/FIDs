@@ -26,28 +26,25 @@
         <ul>
             <li class='has-sub'><a href='#'><span>DATA ENTRY</span></a>
                 <ul>
-                    <li class='has-sub'><span>{!! Html::link('data-entry','Enter data') !!}</span></li>
+                    <li class='has-sub'><span>{!! Html::link('weekly-data-entry','Weekly') !!}</span></li>
+                    <li class='has-sub'><span>{!! Html::link('data-entry','Monthly') !!}</span></li>
                 </ul>
             </li>
+
             <li class='has-sub'><a href='#'><span>DATA CLEANING</span></a>
                 <ul>
                     <li class='has-sub'><span>{!! Html::link('data-cleaning','Clean Data') !!}</span></li>
                 </ul>
             </li>
+
+            <li class='last'>{!! Html::link('weekly-data','VIEW DATA') !!}</li>
+
             <li class='has-sub'><a href='#'><span>MARKET ANALYSIS</span></a>
                 <ul>
                     <li class='has-sub'><span>{!! Html::link('monthly-analysis','Monthly Analysis') !!}</span></li>
                     <li class='has-sub'><span>{!! Html::link('tot','ToT') !!}</span></li>
                 </ul>
             </li>
-            <li class='has-sub'><a href='#'><span>WEEKLY DATA</span></a>
-                <ul>
-                    <li class='has-sub'><span>{!! Html::link('weekly-data','View') !!}</span></li>
-                    <li class='has-sub'><span>{!! Html::link('#','Download') !!}</span></li>
-                </ul>
-            </li>
-            <li class='last'>{!! Html::link('export','EXPORT') !!}</li>
-
             <li class='last'>{!! Html::link('logout','LOGOUT') !!}</li>
         </ul>
     </div>

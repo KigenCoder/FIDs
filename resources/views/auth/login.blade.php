@@ -30,10 +30,18 @@
                     Remember me
                 </label>
             </div>
-            <div class="field">
-                <button class="button is-info">
-                    Login
-                </button>
+            <div class="container">
+                <div class="row justify-content-md-center">
+                    <div class="col col-lg-4">
+                        <button class="button is-info">
+                            LOGIN
+                        </button>
+                    </div>
+                    <div class="col-md-auto btn btn-light">
+                        {!! Html::link('analyst/create','ANALYST REGISTRATION', []) !!}
+                    </div>
+
+                </div>
             </div>
             {!! Form::close() !!}
 

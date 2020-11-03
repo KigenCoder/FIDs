@@ -34,11 +34,12 @@
       marketSelected: function () {
         this.$store.commit('weekly_data/marketIdMutation', this.marketId)
 
+        let weekId = this.$store
         let monthId = this.$store.getters['weekly_data/getMonthId']
         let yearName = this.$store.getters['weekly_data/getYearName']
 
         if(monthId && yearName){//Get data
-          this.$store.dispatch('weekly_data/loadMarketData')
+          this.$store.dispatch('weekly/loadMarketData')
         }
       }
 

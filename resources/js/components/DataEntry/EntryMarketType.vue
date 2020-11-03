@@ -32,7 +32,7 @@
         this.$store.commit('data_entry/marketTypeIdMutation', this.marketTypeId)
         //Fetch markets
         this.$store.dispatch('data_entry/loadMarkets');
-        let marketId = this.$store.getters['data_entry/getMarketId']
+
 
         //Reset data
         this.$store.commit('data_entry/marketIndicatorsMutation', [])

@@ -1,8 +1,13 @@
 <template>
   <tr v-bind:class="list_item.type">
+
     <!-- Category/Indicator name -->
-    <td>{{ list_item.name }}</td>
-    <data_cell v-bind:indicator_id="list_item.id" v-bind:type="list_item.type">
+    <td>{{list_item.name}}</td>
+    <data_cell v-for="header in column_headers"
+               v-bind:key="header.id"
+               v-bind:indicator_id="list_item.id"
+               v-bind:column_header_id="header.id"
+               v-bind:type="list_item.type">
     </data_cell>
   </tr>
 </template>
@@ -19,7 +24,10 @@ export default {
   },
 
   data() {
-    return {}
+    return {
+      supplyId: '',
+      column_headers: [],
+    }
   },
 
   computed: {
@@ -29,16 +37,6 @@ export default {
         return this.data.price
       },
       set: function (newPrice) {
-        /*
-          //console.log("New price: " + newValue+ " ID: " + this.data.id)
-          let market_data_id = this.data.id;
-          if (!isNaN(newPrice) && newPrice > 0) {
-            this.$store.commit('data_cleaning/priceMutation', newPrice);
-            this.$store.commit('data_cleaning/priceIdMutation', this.data.id)
-            this.$store.dispatch('data_cleaning/updateData')
-          }
-          */
-
 
       },
 
@@ -48,7 +46,10 @@ export default {
   },
 
   mounted() {
-
+    this.column_headers = [
+      {id: "1", "title": "Week Data"},
+      {id: "6", "title": "SUPPLY"},
+    ]
   },
 
   methods: {},

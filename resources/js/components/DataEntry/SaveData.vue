@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <button v-if="showComponent" class="button is-info" @click="saveWeeklyData">
+    <button v-if="showComponent" class="button is-info" @click="saveMonthlyData">
       Submit
     </button>
   </div>
@@ -11,7 +11,7 @@
 import {mapState} from 'vuex'
 
 export default {
-  name: "SaveData",
+  name: "SaveMonthlyData",
 
   data() {
     return {
@@ -21,8 +21,8 @@ export default {
 
   methods: {
 
-    saveWeeklyData: function () {
-      this.$store.dispatch("weekly_data_entry/saveData")
+    saveMonthlyData: function () {
+      this.$store.dispatch("data_entry/saveData")
 
     },
   },
@@ -30,17 +30,17 @@ export default {
     this.$store.subscribe((mutation, state) => {
 
       switch (mutation.type) {
-        case 'weekly_data_entry/marketDataMutation':
-          let marketDataSize = state.weekly_data_entry.marketData.length
+        case 'data_entry/marketDataMutation':
+          let marketDataSize =  state.data_entry.marketData.length
 
           if (marketDataSize > 0) {
             this.showComponent = true
-          } else {
+          }else{
             this.showComponent = false
           }
           break
 
-        case 'weekly_data_entry/updateMarketDataMutation':
+        case 'data_entry/updateMarketDataMutation':
           this.showComponent = true
           break
 

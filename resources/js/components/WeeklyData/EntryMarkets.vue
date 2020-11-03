@@ -31,20 +31,31 @@
 
     methods: {
       marketSelected: function () {
+
+        //Reset data
+        this.$store.commit('weekly_data_entry/marketIndicatorsMutation', [])
+        this.$store.commit('weekly_data_entry/marketDataMutation', [])
+
+        //Now commit
         this.$store.commit('weekly_data_entry/marketIdMutation', this.marketId)
         this.$store.commit('weekly_data_entry/refreshPageMutation', true)
+
+
+
 
         let monthId = this.$store.getters['weekly_data_entry/getMonthId']
         let yearName = this.$store.getters['weekly_data_entry/getYearName']
         let weekId = this.$store.getters['weekly_data_entry/getWeekId']
 
 
-        if(weekId && monthId && yearName){//Get data
+        if(weekId && monthId && yearName){//Get market indicators
           this.$store.dispatch('weekly_data_entry/loadMarketIndicators')
         }
 
-        this.$store.commit('weekly_data_entry/marketDataMutation', [])
       }
+
+
+
 
     },
 

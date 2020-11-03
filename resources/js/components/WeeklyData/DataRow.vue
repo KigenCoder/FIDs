@@ -1,13 +1,14 @@
 <template>
   <tr v-bind:class="data_row.type">
     <td>{{ data_row.name }}</td>
-    <data_cell
-        v-for="(data_item, index) in data_row.dataSet"
-        v-bind:data_item_id="data_item.id"
-        v-bind:price="data_item.price"
-        v-bind:key="index">
-    </data_cell>
-    <td v-for="blank in blankCells"></td>
+    <td v-for="currentIndex in this.maxWeeksPerMonth" :key="currentIndex">
+      <data_cell
+          v-bind:currentIndex="currentIndex"
+          v-bind:type="data_row.type"
+          v-bind:dataSet="data_row.dataSet">
+
+      </data_cell>
+    </td>
     <td>{{ thousandSeparator(data_row.lastMonthAverage) }}</td>
   </tr>
 </template>
@@ -26,7 +27,7 @@ export default {
   data() {
     return {
       column_headers: [],
-
+      maxWeeksPerMonth: 5,
     }
   },
 

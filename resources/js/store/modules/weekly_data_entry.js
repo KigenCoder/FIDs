@@ -31,6 +31,7 @@ const mutations = {
     },
     weekIdMutation(state, week_id) {
         state.week_id = week_id
+
     },
     monthIdMutation(state, month_id) {
         state.month_id = month_id
@@ -76,7 +77,20 @@ const mutations = {
 
         state.marketData.push(priceObject)
 
-    }
+    },
+    updateSupplyIdMutation(state, supplyObject) {
+
+        let indicator_id = supplyObject['indicator_id']
+        let supply_id = supplyObject['supply_id']
+        let currentObject
+        for (currentObject of state.marketData) {
+            if (currentObject.indicator_id === indicator_id) {
+                currentObject.supply_id = supply_id
+            }
+        }
+
+
+    },
 
 }
 const actions = {
@@ -116,7 +130,7 @@ const actions = {
             try {
 
                 axios
-                    .post('./api/save_weekly', {
+                    .post('./api/save_data', {
                         "market_data": JSON.stringify(state.marketData),
                     })
                     .then(response => {
@@ -131,6 +145,8 @@ const actions = {
             }
 
         }
+
+
 
     },
 

@@ -6,7 +6,7 @@ namespace App\Http\Controllers;
 class MarketAnalysis extends Controller{
 
     public function __construct() {
-        //$this->middleware("dataAnalyst");
+        $this->middleware("dataAnalyst");
     }
 
     public function monthly_analysis(){

@@ -1,7 +1,14 @@
-@extends('templates.enumerators')
+@extends('templates.analyst')
 
 @section('content')
     <div id="app">
+        <div class="row">
+            <div class="col-12 d-flex justify-content-center text-center">
+                <h1>WEEKLY DATA ENTRY</h1>
+            </div>
+
+        </div>
+        <div class="row">
             <div class="tile is-ancestor is-vertical">
                 <!--Dataset and Indicators -->
                 <div class="tile is-parent container box top-padding">
@@ -19,7 +26,7 @@
                         </div>
 
                         <div class="column">
-                           <save_weekly_data></save_weekly_data>
+                            <save_weekly_data></save_weekly_data>
                         </div>
 
                     </div>
@@ -35,5 +42,6 @@
                 </div>
             </div>
 
+        </div>
     </div>
 @stop

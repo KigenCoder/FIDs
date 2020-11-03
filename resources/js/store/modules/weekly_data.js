@@ -7,7 +7,7 @@ const state = {
     marketId: null,
     marketTypeId: null,
     refresh: false,
-    loadState:0,
+    loadState: 0,
 }
 
 const mutations = {
@@ -44,19 +44,19 @@ const mutations = {
 }
 const actions = {
     loadMarkets({commit}) {
-        commit('utils/loadingStateMutation', true, { root: true })
+        commit('utils/loadingStateMutation', true, {root: true})
         axios
             .post('./api/cleaning_markets', {
                 market_type_id: state.marketTypeId
             })
             .then(response => {
-                commit('utils/loadingStateMutation', false, { root: true })
+                commit('utils/loadingStateMutation', false, {root: true})
                 commit('marketsMutation', response.data)
             })
     },
 
     loadMarketData({commit}) {
-        commit('utils/loadingStateMutation', true, { root: true })
+        commit('utils/loadingStateMutation', true, {root: true})
         axios
             .post('./api/cleaning_data', {
                 market_type_id: state.marketTypeId,
@@ -65,8 +65,9 @@ const actions = {
                 market_id: state.marketId,
             })
             .then(response => {
-                commit('utils/loadingStateMutation', false, { root: true })
+                commit('utils/loadingStateMutation', false, {root: true})
                 commit('marketDataMutation', response.data)
+                //console.log(response.data)
             })
     },
 

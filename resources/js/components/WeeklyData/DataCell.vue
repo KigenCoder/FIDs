@@ -1,5 +1,5 @@
 <template>
-  <td>{{thousandSeparator(weeklyPrice)}}</td>
+  <div>{{thousandSeparator(weeklyPrice)}}</div>
 </template>
 
 
@@ -7,20 +7,42 @@
   export default {
     name: 'data_cell',
     props: [
-      'data_item_id',
-      'price',
+      'dataSet',
+      'type',
+      'currentIndex',
     ],
 
     data() {
-      return {
-      }
+      return {}
     },
 
     computed: {
       weeklyPrice: {
         get: function () {
-          return this.price
+          let priceObject
+          let priceAmount = ""
+          for (priceObject of this.dataSet) {
+            try {
+              let week = parseInt(priceObject.week)
+              let price = parseInt(priceObject.price)
+
+              if (week === this.currentIndex && price > 0) {
+                this.marketData = {
+                  "price_id": priceObject.id,
+                  "price": price,
+                }
+                priceAmount = price
+              }
+            } catch (error) {
+              console.log(error)
+            }
+          }
+          return priceAmount
+
         },
+        set: function (newWeeklyPrice) {
+
+        }
       }
     },
     methods: {

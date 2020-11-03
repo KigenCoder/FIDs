@@ -1936,6 +1936,14 @@ module.exports = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+//
+//
 //
 //
 //
@@ -1945,28 +1953,94 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'data_cell',
-  props: ['data_item_id', 'price'],
+  props: ['dataSet', 'type', 'currentIndex'],
   data: function data() {
     return {
-      newPrice: ''
+      newPrice: '',
+      marketData: {}
     };
   },
   computed: {
+    showFirstTextBox: {
+      get: function get() {
+        try {
+          if (this.type === 'indicator' && this.weeklyPrice > 0) {
+            return true;
+          } else {
+            return false;
+          }
+        } catch (error) {
+          console.log("Show First TextBox: " + error);
+        }
+      }
+    },
+    showSecondTextBox: {
+      get: function get() {
+        try {
+          if (this.type === 'indicator' && this.weeklyPrice > 0) {
+            return true;
+          } else {
+            return false;
+          }
+        } catch (error) {
+          console.log("Show First TextBox: " + error);
+        }
+      }
+    },
     weeklyPrice: {
       get: function get() {
-        return this.price;
+        var priceObject;
+        var priceAmount = "";
+
+        var _iterator = _createForOfIteratorHelper(this.dataSet),
+            _step;
+
+        try {
+          for (_iterator.s(); !(_step = _iterator.n()).done;) {
+            priceObject = _step.value;
+
+            try {
+              var week = parseInt(priceObject.week);
+              var price = parseInt(priceObject.price);
+
+              if (week === this.currentIndex && price > 0) {
+                this.marketData = {
+                  "price_id": priceObject.id,
+                  "price": price
+                };
+                priceAmount = price;
+              }
+            } catch (error) {
+              console.log(error);
+            }
+          }
+        } catch (err) {
+          _iterator.e(err);
+        } finally {
+          _iterator.f();
+        }
+
+        return priceAmount;
       },
       set: function set(newWeeklyPrice) {
-        this.newPrice = newWeeklyPrice;
+        this.marketData.price = newWeeklyPrice;
       }
     }
   },
+  mounted: function mounted() {},
   methods: {
-    savePrice: function savePrice() {
-      if (!isNaN(parseInt(this.newPrice)) && parseInt(this.newPrice) > 0) {
-        this.$store.commit('data_cleaning/priceMutation', this.newPrice);
-        this.$store.commit('data_cleaning/priceIdMutation', this.data_item_id);
-        this.$store.dispatch('data_cleaning/updateData');
+    updatePrice: function updatePrice() {
+      this.$store.commit('data_cleaning/marketUpdatesMutation', this.marketData);
+    },
+    onFocusText: function onFocusText() {
+      this.visible = true;
+      this.weeklyPrice = this.temp;
+    },
+    thousandSeparator: function thousandSeparator(amount) {
+      if (amount !== '' || amount !== undefined || amount !== 0 || amount !== '0' || amount !== null) {
+        return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      } else {
+        return amount;
       }
     }
   }
@@ -1999,7 +2073,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'data_row_item',
@@ -2009,39 +2082,10 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      column_headers: []
+      maxWeeksPerMonth: 5
     };
   },
-  computed: {
-    blankCells: {
-      get: function get() {
-        var totalCells = 5;
-        var blanks = totalCells - this.data_row.dataSet.length;
-        return blanks;
-      }
-    }
-  },
-  mounted: function mounted() {
-    this.column_headers = [{
-      id: "1",
-      "title": "WEEK 1"
-    }, {
-      id: "2",
-      "title": "WEEK 2"
-    }, {
-      id: "3",
-      "title": "WEEK 3"
-    }, {
-      id: "4",
-      "title": "WEEK 4"
-    }, {
-      id: "5",
-      "title": "WEEK 5"
-    }, {
-      id: "6",
-      "title": "PREVIOUS MONTH AVERAGE"
-    }];
-  },
+  computed: {},
   methods: {}
 });
 
@@ -2108,6 +2152,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         case 'data_cleaning/marketDataMutation':
           if (state.data_cleaning.market_data.length > 0) {
             _this.showTable = true;
+          } else {
+            _this.showTable = false;
           }
 
           break;
@@ -2366,6 +2412,60 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/DataCleaning/UpdateData.vue?vue&type=script&lang=js&":
+/*!**********************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/DataCleaning/UpdateData.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "btnUpdateData",
+  data: function data() {
+    return {
+      showComponent: false
+    };
+  },
+  methods: {
+    updateData: function updateData() {
+      this.$store.dispatch("data_cleaning/updateData");
+    }
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    this.$store.subscribe(function (mutation, state) {
+      switch (mutation.type) {
+        case 'data_cleaning/marketUpdatesMutation':
+          var marketDataSize = state.data_cleaning.marketUpdates.length;
+
+          if (marketDataSize > 0) {
+            _this.showComponent = true;
+          } else {
+            _this.showComponent = false;
+          }
+
+          break;
+      }
+    });
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/DataEntry/DataEntryCell.vue?vue&type=script&lang=js&":
 /*!**********************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/DataEntry/DataEntryCell.vue?vue&type=script&lang=js& ***!
@@ -2394,14 +2494,18 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['indicator_id', 'column_header_id', 'type'],
   name: "data_entry_cell",
   data: function data() {
     return {
       supplyCategories: [],
-      supplyId: '',
-      price: ''
+      supplyId: 4,
+      //Default to normal supply
+      price: '',
+      visible: true
     };
   },
   mounted: function mounted() {
@@ -2427,15 +2531,47 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     supplySelected: function supplySelected() {
-      //console.log("Supply ID: " + this.supplyId);
-      this.$store.commit('data_entry/supplyIdMutation', this.supplyId);
-      this.$store.dispatch('data_entry/updateSupplyId');
+      if (this.supplyId && this.indicator_id) {
+        var supplyObject = {
+          "supply_id": this.supplyId,
+          "indicator_id": this.indicator_id
+        };
+        this.$store.commit('data_entry/updateSupplyIdMutation', supplyObject);
+      }
     },
     savePrice: function savePrice() {
-      this.$store.commit('data_entry/indicatorIdMutation', this.indicator_id);
-      this.$store.commit('data_entry/weekIdMutation', this.column_header_id);
-      this.$store.commit('data_entry/priceMutation', this.price);
-      this.$store.dispatch('data_entry/saveData');
+      var year_name = this.$store.getters['data_entry/getYearName'];
+      var month_id = this.$store.getters['data_entry/getMonthId'];
+      var week_id = this.column_header_id;
+      var market_id = this.$store.getters['data_entry/getMarketId'];
+      var indicator_id = this.indicator_id;
+      var price = this.price; //let supply_id = this.supplyId
+
+      var priceObject = {};
+
+      if (market_id && year_name && month_id && week_id && indicator_id && price !== '' && price !== null) {
+        priceObject = {
+          "market_id": market_id,
+          "year_name": year_name,
+          "month_id": month_id,
+          "week_id": week_id,
+          "indicator_id": indicator_id,
+          "price": price,
+          "supply_id": this.supplyId
+        };
+        this.$store.commit('data_entry/updateMarketDataMutation', priceObject);
+      }
+    },
+    onFocusText: function onFocusText() {
+      this.visible = true;
+      this.price = this.temp;
+    },
+    thousandSeparator: function thousandSeparator(amount) {
+      if (amount !== '' || amount !== undefined || amount !== 0 || amount !== '0' || amount !== null) {
+        return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      } else {
+        return amount;
+      }
     }
   }
 });
@@ -2498,6 +2634,92 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/DataEntry/DataEntryRow.vue?vue&type=script&lang=js&":
+/*!*********************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/DataEntry/DataEntryRow.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _DataEntryCell_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DataEntryCell.vue */ "./resources/js/components/DataEntry/DataEntryCell.vue");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'indicator_list_item',
+  props: ['list_item'],
+  components: {
+    data_cell: _DataEntryCell_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
+  data: function data() {
+    return {
+      weekOne: '',
+      weekTwo: '',
+      weekThree: '',
+      weekFour: '',
+      weekFive: '',
+      supplyId: '',
+      column_headers: []
+    };
+  },
+  computed: {
+    currentPrice: {
+      get: function get() {
+        return this.data.price;
+      },
+      set: function set(newPrice) {
+        /*
+          //console.log("New price: " + newValue+ " ID: " + this.data.id)
+          let market_data_id = this.data.id;
+          if (!isNaN(newPrice) && newPrice > 0) {
+            this.$store.commit('data_cleaning/priceMutation', newPrice);
+            this.$store.commit('data_cleaning/priceIdMutation', this.data.id)
+            this.$store.dispatch('data_cleaning/updateData')
+          }
+          */
+      }
+    }
+  },
+  mounted: function mounted() {
+    this.column_headers = [{
+      id: "1",
+      "title": "WEEK 1"
+    }, {
+      id: "2",
+      "title": "WEEK 2"
+    }, {
+      id: "3",
+      "title": "WEEK 3"
+    }, {
+      id: "4",
+      "title": "WEEK 4"
+    }, {
+      id: "5",
+      "title": "WEEK 5"
+    }, {
+      id: "6",
+      "title": "SUPPLY"
+    }];
+  },
+  methods: {}
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/DataEntry/DataEntryTable.vue?vue&type=script&lang=js&":
 /*!***********************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/DataEntry/DataEntryTable.vue?vue&type=script&lang=js& ***!
@@ -2508,7 +2730,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
-/* harmony import */ var _IndicatorList_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./IndicatorList.vue */ "./resources/js/components/DataEntry/IndicatorList.vue");
+/* harmony import */ var _DataEntryRow_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DataEntryRow.vue */ "./resources/js/components/DataEntry/DataEntryRow.vue");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -2544,7 +2766,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "DataTable",
   components: {
-    indicator_list: _IndicatorList_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
+    data_entry_rows: _DataEntryRow_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
   data: function data() {
     return {
@@ -2633,8 +2855,7 @@ __webpack_require__.r(__webpack_exports__);
     typeSelected: function typeSelected() {
       this.$store.commit('data_entry/marketTypeIdMutation', this.marketTypeId); //Fetch markets
 
-      this.$store.dispatch('data_entry/loadMarkets');
-      var marketId = this.$store.getters['data_entry/getMarketId']; //Reset data
+      this.$store.dispatch('data_entry/loadMarkets'); //Reset data
 
       this.$store.commit('data_entry/marketIndicatorsMutation', []);
     }
@@ -2771,21 +2992,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/DataEntry/IndicatorList.vue?vue&type=script&lang=js&":
-/*!**********************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/DataEntry/IndicatorList.vue?vue&type=script&lang=js& ***!
-  \**********************************************************************************************************************************************************************************/
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/DataEntry/SaveData.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/DataEntry/SaveData.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _DataEntryCell_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DataEntryCell.vue */ "./resources/js/components/DataEntry/DataEntryCell.vue");
-//
-//
-//
-//
-//
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 //
 //
 //
@@ -2797,62 +3013,39 @@ __webpack_require__.r(__webpack_exports__);
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: 'indicator_list_item',
-  props: ['list_item'],
-  components: {
-    data_cell: _DataEntryCell_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
-  },
+  name: "SaveMonthlyData",
   data: function data() {
     return {
-      weekOne: '',
-      weekTwo: '',
-      weekThree: '',
-      weekFour: '',
-      weekFive: '',
-      supplyId: '',
-      column_headers: []
+      showComponent: false
     };
   },
-  computed: {
-    currentPrice: {
-      get: function get() {
-        return this.data.price;
-      },
-      set: function set(newPrice) {
-        /*
-          //console.log("New price: " + newValue+ " ID: " + this.data.id)
-          let market_data_id = this.data.id;
-          if (!isNaN(newPrice) && newPrice > 0) {
-            this.$store.commit('data_cleaning/priceMutation', newPrice);
-            this.$store.commit('data_cleaning/priceIdMutation', this.data.id)
-            this.$store.dispatch('data_cleaning/updateData')
-          }
-          */
-      }
+  methods: {
+    saveMonthlyData: function saveMonthlyData() {
+      this.$store.dispatch("data_entry/saveData");
     }
   },
   mounted: function mounted() {
-    this.column_headers = [{
-      id: "1",
-      "title": "WEEK 1"
-    }, {
-      id: "2",
-      "title": "WEEK 2"
-    }, {
-      id: "3",
-      "title": "WEEK 3"
-    }, {
-      id: "4",
-      "title": "WEEK 4"
-    }, {
-      id: "5",
-      "title": "WEEK 5"
-    }, {
-      id: "6",
-      "title": "SUPPLY"
-    }];
-  },
-  methods: {}
+    var _this = this;
+
+    this.$store.subscribe(function (mutation, state) {
+      switch (mutation.type) {
+        case 'data_entry/marketDataMutation':
+          var marketDataSize = state.data_entry.marketData.length;
+
+          if (marketDataSize > 0) {
+            _this.showComponent = true;
+          } else {
+            _this.showComponent = false;
+          }
+
+          break;
+
+        case 'data_entry/updateMarketDataMutation':
+          _this.showComponent = true;
+          break;
+      }
+    });
+  }
 });
 
 /***/ }),
@@ -3585,6 +3778,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 //
 //
 //
@@ -3592,15 +3791,47 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'data_cell',
-  props: ['data_item_id', 'price'],
+  props: ['dataSet', 'type', 'currentIndex'],
   data: function data() {
     return {};
   },
   computed: {
     weeklyPrice: {
       get: function get() {
-        return this.price;
-      }
+        var priceObject;
+        var priceAmount = "";
+
+        var _iterator = _createForOfIteratorHelper(this.dataSet),
+            _step;
+
+        try {
+          for (_iterator.s(); !(_step = _iterator.n()).done;) {
+            priceObject = _step.value;
+
+            try {
+              var week = parseInt(priceObject.week);
+              var price = parseInt(priceObject.price);
+
+              if (week === this.currentIndex && price > 0) {
+                this.marketData = {
+                  "price_id": priceObject.id,
+                  "price": price
+                };
+                priceAmount = price;
+              }
+            } catch (error) {
+              console.log(error);
+            }
+          }
+        } catch (err) {
+          _iterator.e(err);
+        } finally {
+          _iterator.f();
+        }
+
+        return priceAmount;
+      },
+      set: function set(newWeeklyPrice) {}
     }
   },
   methods: {
@@ -3640,24 +3871,59 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['indicator_id', 'type'],
+  props: ['indicator_id', 'column_header_id', 'type'],
   name: "data_entry_cell",
   data: function data() {
     return {
       price: '',
       temp: null,
       prices: [],
-      visible: true
+      visible: true,
+      supplyCategories: [],
+      supplyId: 4 //Default to normal supply
+
     };
   },
-  computed: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])('monthly_analysis', [])), {}, {
+  computed: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])('weekly_data_entry', [])), {}, {
     inputType: function inputType() {
       return this.type === 'indicator' && this.visible;
     }
   }),
-  mounted: function mounted() {},
+  mounted: function mounted() {
+    this.supplyCategories = [{
+      id: 1,
+      supply_type: "Not available"
+    }, {
+      id: 2,
+      supply_type: "Scarce"
+    }, {
+      id: 3,
+      supply_type: "Below normal"
+    }, {
+      id: 4,
+      supply_type: "Normal"
+    }, {
+      id: 5,
+      supply_type: "Above normal"
+    }, {
+      id: 6,
+      supply_type: "Surplus"
+    }];
+  },
   methods: {
     updatePriceList: function updatePriceList() {
       /* For displaying 1000 separator */
@@ -3679,9 +3945,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           "month_id": monthId,
           "week_id": weekId,
           "indicator_id": this.indicator_id,
-          "price": marketPrice
+          "price": marketPrice,
+          "supply_id": this.supplyId
         };
         this.$store.commit('weekly_data_entry/updateMarketDataMutation', priceObject);
+      }
+    },
+    supplySelected: function supplySelected() {
+      if (this.supplyId && this.indicator_id) {
+        var supplyObject = {
+          "supply_id": this.supplyId,
+          "indicator_id": this.indicator_id
+        };
+        this.$store.commit('weekly_data_entry/updateSupplyIdMutation', supplyObject);
       }
     },
     onFocusText: function onFocusText() {
@@ -3720,6 +3996,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'indicator_row',
@@ -3728,27 +4009,28 @@ __webpack_require__.r(__webpack_exports__);
     data_cell: _WeeklyData_DataEntryCell_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
   data: function data() {
-    return {};
+    return {
+      supplyId: '',
+      column_headers: []
+    };
   },
   computed: {
     currentPrice: {
       get: function get() {
         return this.data.price;
       },
-      set: function set(newPrice) {
-        /*
-          //console.log("New price: " + newValue+ " ID: " + this.data.id)
-          let market_data_id = this.data.id;
-          if (!isNaN(newPrice) && newPrice > 0) {
-            this.$store.commit('data_cleaning/priceMutation', newPrice);
-            this.$store.commit('data_cleaning/priceIdMutation', this.data.id)
-            this.$store.dispatch('data_cleaning/updateData')
-          }
-          */
-      }
+      set: function set(newPrice) {}
     }
   },
-  mounted: function mounted() {},
+  mounted: function mounted() {
+    this.column_headers = [{
+      id: "1",
+      "title": "Week Data"
+    }, {
+      id: "6",
+      "title": "SUPPLY"
+    }];
+  },
   methods: {}
 });
 
@@ -3790,6 +4072,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -3812,12 +4095,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       switch (mutation.type) {
         case 'weekly_data_entry/refreshPage':
-          if (state.weekly_data_entry.refresh) {
-            if (marketIndicatorsSize > 0) {
-              //console.log('Force rerender')
-              _this.forceRerender();
-            }
-          }
+          _this.forceRerender();
 
           break;
 
@@ -3825,6 +4103,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           if (marketIndicatorsSize > 0) {
             _this.showTable = true;
             break;
+          } else {
+            _this.showTable = false;
           }
 
       }
@@ -3865,6 +4145,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'data_row_item',
@@ -3874,7 +4155,8 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      column_headers: []
+      column_headers: [],
+      maxWeeksPerMonth: 5
     };
   },
   computed: {
@@ -4097,6 +4379,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])('weekly_data_entry', ['markets'])),
   methods: {
     marketSelected: function marketSelected() {
+      //Reset data
+      this.$store.commit('weekly_data_entry/marketIndicatorsMutation', []);
+      this.$store.commit('weekly_data_entry/marketDataMutation', []); //Now commit
+
       this.$store.commit('weekly_data_entry/marketIdMutation', this.marketId);
       this.$store.commit('weekly_data_entry/refreshPageMutation', true);
       var monthId = this.$store.getters['weekly_data_entry/getMonthId'];
@@ -4104,11 +4390,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var weekId = this.$store.getters['weekly_data_entry/getWeekId'];
 
       if (weekId && monthId && yearName) {
-        //Get data
+        //Get market indicators
         this.$store.dispatch('weekly_data_entry/loadMarketIndicators');
       }
-
-      this.$store.commit('weekly_data_entry/marketDataMutation', []);
     }
   }
 });
@@ -4211,12 +4495,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   methods: {
     marketSelected: function marketSelected() {
       this.$store.commit('weekly_data/marketIdMutation', this.marketId);
+      var weekId = this.$store;
       var monthId = this.$store.getters['weekly_data/getMonthId'];
       var yearName = this.$store.getters['weekly_data/getYearName'];
 
       if (monthId && yearName) {
         //Get data
-        this.$store.dispatch('weekly_data/loadMarketData');
+        this.$store.dispatch('weekly/loadMarketData');
       }
     }
   }
@@ -4546,9 +4831,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   methods: {
     weekSelected: function weekSelected() {
-      //Commit to the store the current week ID
+      //reset data
+      this.$store.commit('weekly_data_entry/marketDataMutation', []);
+      this.$store.commit('weekly_data_entry/marketIndicatorsMutation', []); //Commit to the store the current week ID
+
       this.$store.commit('weekly_data_entry/weekIdMutation', this.week_id);
-      this.$store.commit('weekly_data_entry/refreshPageMutation', true);
       var marketId = this.$store.getters['weekly_data_entry/getMarketId'];
       var yearName = this.$store.getters['weekly_data_entry/getYearName'];
       var monthId = this.$store.getters["weekly_data_entry/getMonthId"];
@@ -4559,9 +4846,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
     },
     monthSelected: function monthSelected() {
-      //Commit to the store the current month ID
+      //reset data
+      this.$store.commit('weekly_data_entry/marketDataMutation', []);
+      this.$store.commit('weekly_data_entry/marketIndicatorsMutation', []); //Commit to the store the current month ID
+
       this.$store.commit('weekly_data_entry/monthIdMutation', this.month_id);
-      this.$store.commit('weekly_data_entry/refreshPageMutation', true);
       var marketId = this.$store.getters['weekly_data_entry/getMarketId'];
       var yearName = this.$store.getters['weekly_data_entry/getYearName'];
       var weekId = this.$store.getters["weekly_data_entry/getWeekId"];
@@ -4572,8 +4861,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
     },
     yearSelected: function yearSelected() {
+      //reset data
+      this.$store.commit('weekly_data_entry/marketDataMutation', []);
+      this.$store.commit('weekly_data_entry/marketIndicatorsMutation', []); //Set year
+
       this.$store.commit('weekly_data_entry/yearNameMutation', this.year_name);
-      this.$store.commit('weekly_data_entry/refreshPageMutation', true);
       var marketId = this.$store.getters['weekly_data_entry/getMarketId'];
       var monthId = this.$store.getters['weekly_data_entry/getMonthId'];
       var weekId = this.$store.getters["weekly_data_entry/getWeekId"];
@@ -24826,35 +25118,30 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("td", [
-    _c("input", {
-      directives: [
-        {
-          name: "model",
-          rawName: "v-model",
-          value: _vm.weeklyPrice,
-          expression: "weeklyPrice"
-        }
-      ],
-      domProps: { value: _vm.weeklyPrice },
-      on: {
-        keyup: function($event) {
-          if (
-            !$event.type.indexOf("key") &&
-            _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
-          ) {
-            return null
+  return _c("div", { staticClass: "container" }, [
+    _vm.showFirstTextBox
+      ? _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.weeklyPrice,
+              expression: "weeklyPrice"
+            }
+          ],
+          attrs: { type: "number" },
+          domProps: { value: _vm.weeklyPrice },
+          on: {
+            blur: _vm.updatePrice,
+            input: function($event) {
+              if ($event.target.composing) {
+                return
+              }
+              _vm.weeklyPrice = $event.target.value
+            }
           }
-          return _vm.savePrice($event)
-        },
-        input: function($event) {
-          if ($event.target.composing) {
-            return
-          }
-          _vm.weeklyPrice = $event.target.value
-        }
-      }
-    })
+        })
+      : _vm._e()
   ])
 }
 var staticRenderFns = []
@@ -24885,15 +25172,21 @@ var render = function() {
     [
       _c("td", [_vm._v(_vm._s(_vm.data_row.name))]),
       _vm._v(" "),
-      _vm._l(_vm.data_row.dataSet, function(data_item, index) {
-        return _c("data_cell", {
-          key: index,
-          attrs: { data_item_id: data_item.id, price: data_item.price }
-        })
-      }),
-      _vm._v(" "),
-      _vm._l(_vm.blankCells, function(blank) {
-        return _c("td")
+      _vm._l(this.maxWeeksPerMonth, function(currentIndex) {
+        return _c(
+          "td",
+          { key: currentIndex },
+          [
+            _c("data_cell", {
+              attrs: {
+                currentIndex: currentIndex,
+                type: _vm.data_row.type,
+                dataSet: _vm.data_row.dataSet
+              }
+            })
+          ],
+          1
+        )
       }),
       _vm._v(" "),
       _c("td", [_vm._v(_vm._s(_vm.data_row.lastMonthAverage))])
@@ -25247,6 +25540,38 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/DataCleaning/UpdateData.vue?vue&type=template&id=e5a11a38&":
+/*!**************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/DataCleaning/UpdateData.vue?vue&type=template&id=e5a11a38& ***!
+  \**************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "container-fluid" }, [
+    _vm.showComponent
+      ? _c(
+          "button",
+          { staticClass: "button is-info", on: { click: _vm.updateData } },
+          [_vm._v("\n    Submit\n  ")]
+        )
+      : _vm._e()
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/DataEntry/DataEntryCell.vue?vue&type=template&id=39319348&":
 /*!**************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/DataEntry/DataEntryCell.vue?vue&type=template&id=39319348& ***!
@@ -25263,7 +25588,9 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("td", [
-    _vm.type === "indicator" && _vm.column_header_id !== "6"
+    _vm.type === "indicator" &&
+    _vm.column_header_id !== "6" &&
+    _vm.visible === true
       ? _c("input", {
           directives: [
             {
@@ -25273,17 +25600,36 @@ var render = function() {
               expression: "price"
             }
           ],
+          attrs: { type: "number" },
           domProps: { value: _vm.price },
           on: {
-            keyup: function($event) {
-              if (
-                !$event.type.indexOf("key") &&
-                _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
-              ) {
-                return null
+            blur: _vm.savePrice,
+            input: function($event) {
+              if ($event.target.composing) {
+                return
               }
-              return _vm.savePrice($event)
-            },
+              _vm.price = $event.target.value
+            }
+          }
+        })
+      : _vm._e(),
+    _vm._v(" "),
+    _vm.type === "indicator" &&
+    _vm.column_header_id !== "6" &&
+    _vm.visible === false
+      ? _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.price,
+              expression: "price"
+            }
+          ],
+          attrs: { type: "text" },
+          domProps: { value: _vm.price },
+          on: {
+            focus: _vm.onFocusText,
             input: function($event) {
               if ($event.target.composing) {
                 return
@@ -25418,6 +25764,48 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/DataEntry/DataEntryRow.vue?vue&type=template&id=f0865538&":
+/*!*************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/DataEntry/DataEntryRow.vue?vue&type=template&id=f0865538& ***!
+  \*************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "tr",
+    { class: _vm.list_item.type },
+    [
+      _c("td", [_vm._v(_vm._s(_vm.list_item.name))]),
+      _vm._v(" "),
+      _vm._l(_vm.column_headers, function(header) {
+        return _c("data_cell", {
+          key: header.id,
+          attrs: {
+            indicator_id: _vm.list_item.id,
+            column_header_id: header.id,
+            type: _vm.list_item.type
+          }
+        })
+      })
+    ],
+    2
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/DataEntry/DataEntryTable.vue?vue&type=template&id=17ef88d8&":
 /*!***************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/DataEntry/DataEntryTable.vue?vue&type=template&id=17ef88d8& ***!
@@ -25467,7 +25855,7 @@ var render = function() {
                   indicatorListItem,
                   index
                 ) {
-                  return _c("indicator_list", {
+                  return _c("data_entry_rows", {
                     key: index,
                     attrs: { list_item: indicatorListItem }
                   })
@@ -25690,10 +26078,10 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/DataEntry/IndicatorList.vue?vue&type=template&id=44b9feaa&":
-/*!**************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/DataEntry/IndicatorList.vue?vue&type=template&id=44b9feaa& ***!
-  \**************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/DataEntry/SaveData.vue?vue&type=template&id=c26d2e4e&":
+/*!*********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/DataEntry/SaveData.vue?vue&type=template&id=c26d2e4e& ***!
+  \*********************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -25705,25 +26093,15 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "tr",
-    { class: _vm.list_item.type },
-    [
-      _c("td", [_vm._v(_vm._s(_vm.list_item.name))]),
-      _vm._v(" "),
-      _vm._l(_vm.column_headers, function(header) {
-        return _c("data_cell", {
-          key: header.id,
-          attrs: {
-            indicator_id: _vm.list_item.id,
-            column_header_id: header.id,
-            type: _vm.list_item.type
-          }
-        })
-      })
-    ],
-    2
-  )
+  return _c("div", { staticClass: "container-fluid" }, [
+    _vm.showComponent
+      ? _c(
+          "button",
+          { staticClass: "button is-info", on: { click: _vm.saveMonthlyData } },
+          [_vm._v("\n    Submit\n  ")]
+        )
+      : _vm._e()
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -26492,7 +26870,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("td", [_vm._v(_vm._s(_vm.thousandSeparator(_vm.weeklyPrice)))])
+  return _c("div", [_vm._v(_vm._s(_vm.thousandSeparator(_vm.weeklyPrice)))])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -26517,7 +26895,9 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("td", [
-    _vm.type === "indicator" && _vm.visible === true
+    _vm.type === "indicator" &&
+    _vm.visible === true &&
+    _vm.column_header_id !== "6"
       ? _c("input", {
           directives: [
             {
@@ -26541,7 +26921,9 @@ var render = function() {
         })
       : _vm._e(),
     _vm._v(" "),
-    _vm.type === "indicator" && _vm.visible === false
+    _vm.type === "indicator" &&
+    _vm.visible === false &&
+    _vm.column_header_id !== "6"
       ? _c("input", {
           directives: [
             {
@@ -26563,6 +26945,52 @@ var render = function() {
             }
           }
         })
+      : _vm._e(),
+    _vm._v(" "),
+    _vm.type === "indicator" && _vm.column_header_id === "6"
+      ? _c(
+          "select",
+          {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.supplyId,
+                expression: "supplyId"
+              }
+            ],
+            on: {
+              change: [
+                function($event) {
+                  var $$selectedVal = Array.prototype.filter
+                    .call($event.target.options, function(o) {
+                      return o.selected
+                    })
+                    .map(function(o) {
+                      var val = "_value" in o ? o._value : o.value
+                      return val
+                    })
+                  _vm.supplyId = $event.target.multiple
+                    ? $$selectedVal
+                    : $$selectedVal[0]
+                },
+                _vm.supplySelected
+              ]
+            }
+          },
+          [
+            _c("option", { attrs: { value: "", disabled: "", selected: "" } }, [
+              _vm._v("Supply")
+            ]),
+            _vm._v(" "),
+            _vm._l(_vm.supplyCategories, function(supply) {
+              return _c("option", { domProps: { value: supply.id } }, [
+                _vm._v("\n      " + _vm._s(supply.supply_type) + "\n    ")
+              ])
+            })
+          ],
+          2
+        )
       : _vm._e()
   ])
 }
@@ -26594,11 +27022,18 @@ var render = function() {
     [
       _c("td", [_vm._v(_vm._s(_vm.list_item.name))]),
       _vm._v(" "),
-      _c("data_cell", {
-        attrs: { indicator_id: _vm.list_item.id, type: _vm.list_item.type }
+      _vm._l(_vm.column_headers, function(header) {
+        return _c("data_cell", {
+          key: header.id,
+          attrs: {
+            indicator_id: _vm.list_item.id,
+            column_header_id: header.id,
+            type: _vm.list_item.type
+          }
+        })
       })
     ],
-    1
+    2
   )
 }
 var staticRenderFns = []
@@ -26640,6 +27075,8 @@ var render = function() {
               _c("th", [_vm._v("INDICATOR")]),
               _vm._v(" "),
               _c("th", [_vm._v("Weekly Data")]),
+              _vm._v(" "),
+              _c("th", [_vm._v("SUPPLY")]),
               _vm._v(" "),
               _c(
                 "tbody",
@@ -26689,15 +27126,21 @@ var render = function() {
     [
       _c("td", [_vm._v(_vm._s(_vm.data_row.name))]),
       _vm._v(" "),
-      _vm._l(_vm.data_row.dataSet, function(data_item, index) {
-        return _c("data_cell", {
-          key: index,
-          attrs: { data_item_id: data_item.id, price: data_item.price }
-        })
-      }),
-      _vm._v(" "),
-      _vm._l(_vm.blankCells, function(blank) {
-        return _c("td")
+      _vm._l(this.maxWeeksPerMonth, function(currentIndex) {
+        return _c(
+          "td",
+          { key: currentIndex },
+          [
+            _c("data_cell", {
+              attrs: {
+                currentIndex: currentIndex,
+                type: _vm.data_row.type,
+                dataSet: _vm.data_row.dataSet
+              }
+            })
+          ],
+          1
+        )
       }),
       _vm._v(" "),
       _c("td", [
@@ -42406,6 +42849,8 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('time_periods', __webpack_r
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('save_weekly_data', __webpack_require__(/*! ./components/WeeklyData/SaveData.vue */ "./resources/js/components/WeeklyData/SaveData.vue")["default"]);
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('weekly_entry_table', __webpack_require__(/*! ./components/WeeklyData/DataEntryTable.vue */ "./resources/js/components/WeeklyData/DataEntryTable.vue")["default"]);
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('weekly_indicators', __webpack_require__(/*! ./components/WeeklyData/DataEntryRow.vue */ "./resources/js/components/WeeklyData/DataEntryRow.vue")["default"]);
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('save_monthly_data', __webpack_require__(/*! ./components/DataEntry/SaveData.vue */ "./resources/js/components/DataEntry/SaveData.vue")["default"]);
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('btn_update_data', __webpack_require__(/*! ./components/DataCleaning/UpdateData.vue */ "./resources/js/components/DataCleaning/UpdateData.vue")["default"]);
 var app = new vue__WEBPACK_IMPORTED_MODULE_0___default.a({
   el: '#app',
   store: _store_index_js__WEBPACK_IMPORTED_MODULE_1__["store"],
@@ -42875,6 +43320,75 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/DataCleaning/UpdateData.vue":
+/*!*************************************************************!*\
+  !*** ./resources/js/components/DataCleaning/UpdateData.vue ***!
+  \*************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _UpdateData_vue_vue_type_template_id_e5a11a38___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./UpdateData.vue?vue&type=template&id=e5a11a38& */ "./resources/js/components/DataCleaning/UpdateData.vue?vue&type=template&id=e5a11a38&");
+/* harmony import */ var _UpdateData_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./UpdateData.vue?vue&type=script&lang=js& */ "./resources/js/components/DataCleaning/UpdateData.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _UpdateData_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _UpdateData_vue_vue_type_template_id_e5a11a38___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _UpdateData_vue_vue_type_template_id_e5a11a38___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/DataCleaning/UpdateData.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/DataCleaning/UpdateData.vue?vue&type=script&lang=js&":
+/*!**************************************************************************************!*\
+  !*** ./resources/js/components/DataCleaning/UpdateData.vue?vue&type=script&lang=js& ***!
+  \**************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UpdateData_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./UpdateData.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/DataCleaning/UpdateData.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UpdateData_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/DataCleaning/UpdateData.vue?vue&type=template&id=e5a11a38&":
+/*!********************************************************************************************!*\
+  !*** ./resources/js/components/DataCleaning/UpdateData.vue?vue&type=template&id=e5a11a38& ***!
+  \********************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_UpdateData_vue_vue_type_template_id_e5a11a38___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./UpdateData.vue?vue&type=template&id=e5a11a38& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/DataCleaning/UpdateData.vue?vue&type=template&id=e5a11a38&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_UpdateData_vue_vue_type_template_id_e5a11a38___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_UpdateData_vue_vue_type_template_id_e5a11a38___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/js/components/DataEntry/DataEntryCell.vue":
 /*!*************************************************************!*\
   !*** ./resources/js/components/DataEntry/DataEntryCell.vue ***!
@@ -43008,6 +43522,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DataEntryMarkets_vue_vue_type_template_id_1b7e8fc1___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DataEntryMarkets_vue_vue_type_template_id_1b7e8fc1___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/DataEntry/DataEntryRow.vue":
+/*!************************************************************!*\
+  !*** ./resources/js/components/DataEntry/DataEntryRow.vue ***!
+  \************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _DataEntryRow_vue_vue_type_template_id_f0865538___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DataEntryRow.vue?vue&type=template&id=f0865538& */ "./resources/js/components/DataEntry/DataEntryRow.vue?vue&type=template&id=f0865538&");
+/* harmony import */ var _DataEntryRow_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DataEntryRow.vue?vue&type=script&lang=js& */ "./resources/js/components/DataEntry/DataEntryRow.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _DataEntryRow_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _DataEntryRow_vue_vue_type_template_id_f0865538___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _DataEntryRow_vue_vue_type_template_id_f0865538___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/DataEntry/DataEntryRow.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/DataEntry/DataEntryRow.vue?vue&type=script&lang=js&":
+/*!*************************************************************************************!*\
+  !*** ./resources/js/components/DataEntry/DataEntryRow.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DataEntryRow_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./DataEntryRow.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/DataEntry/DataEntryRow.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DataEntryRow_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/DataEntry/DataEntryRow.vue?vue&type=template&id=f0865538&":
+/*!*******************************************************************************************!*\
+  !*** ./resources/js/components/DataEntry/DataEntryRow.vue?vue&type=template&id=f0865538& ***!
+  \*******************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DataEntryRow_vue_vue_type_template_id_f0865538___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./DataEntryRow.vue?vue&type=template&id=f0865538& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/DataEntry/DataEntryRow.vue?vue&type=template&id=f0865538&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DataEntryRow_vue_vue_type_template_id_f0865538___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DataEntryRow_vue_vue_type_template_id_f0865538___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
@@ -43220,17 +43803,17 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/js/components/DataEntry/IndicatorList.vue":
-/*!*************************************************************!*\
-  !*** ./resources/js/components/DataEntry/IndicatorList.vue ***!
-  \*************************************************************/
+/***/ "./resources/js/components/DataEntry/SaveData.vue":
+/*!********************************************************!*\
+  !*** ./resources/js/components/DataEntry/SaveData.vue ***!
+  \********************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _IndicatorList_vue_vue_type_template_id_44b9feaa___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./IndicatorList.vue?vue&type=template&id=44b9feaa& */ "./resources/js/components/DataEntry/IndicatorList.vue?vue&type=template&id=44b9feaa&");
-/* harmony import */ var _IndicatorList_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./IndicatorList.vue?vue&type=script&lang=js& */ "./resources/js/components/DataEntry/IndicatorList.vue?vue&type=script&lang=js&");
+/* harmony import */ var _SaveData_vue_vue_type_template_id_c26d2e4e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SaveData.vue?vue&type=template&id=c26d2e4e& */ "./resources/js/components/DataEntry/SaveData.vue?vue&type=template&id=c26d2e4e&");
+/* harmony import */ var _SaveData_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./SaveData.vue?vue&type=script&lang=js& */ "./resources/js/components/DataEntry/SaveData.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -43240,9 +43823,9 @@ __webpack_require__.r(__webpack_exports__);
 /* normalize component */
 
 var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _IndicatorList_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _IndicatorList_vue_vue_type_template_id_44b9feaa___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _IndicatorList_vue_vue_type_template_id_44b9feaa___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  _SaveData_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _SaveData_vue_vue_type_template_id_c26d2e4e___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _SaveData_vue_vue_type_template_id_c26d2e4e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
   null,
@@ -43252,38 +43835,38 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "resources/js/components/DataEntry/IndicatorList.vue"
+component.options.__file = "resources/js/components/DataEntry/SaveData.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
 
-/***/ "./resources/js/components/DataEntry/IndicatorList.vue?vue&type=script&lang=js&":
-/*!**************************************************************************************!*\
-  !*** ./resources/js/components/DataEntry/IndicatorList.vue?vue&type=script&lang=js& ***!
-  \**************************************************************************************/
+/***/ "./resources/js/components/DataEntry/SaveData.vue?vue&type=script&lang=js&":
+/*!*********************************************************************************!*\
+  !*** ./resources/js/components/DataEntry/SaveData.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_IndicatorList_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./IndicatorList.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/DataEntry/IndicatorList.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_IndicatorList_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_SaveData_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./SaveData.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/DataEntry/SaveData.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_SaveData_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
-/***/ "./resources/js/components/DataEntry/IndicatorList.vue?vue&type=template&id=44b9feaa&":
-/*!********************************************************************************************!*\
-  !*** ./resources/js/components/DataEntry/IndicatorList.vue?vue&type=template&id=44b9feaa& ***!
-  \********************************************************************************************/
+/***/ "./resources/js/components/DataEntry/SaveData.vue?vue&type=template&id=c26d2e4e&":
+/*!***************************************************************************************!*\
+  !*** ./resources/js/components/DataEntry/SaveData.vue?vue&type=template&id=c26d2e4e& ***!
+  \***************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_IndicatorList_vue_vue_type_template_id_44b9feaa___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./IndicatorList.vue?vue&type=template&id=44b9feaa& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/DataEntry/IndicatorList.vue?vue&type=template&id=44b9feaa&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_IndicatorList_vue_vue_type_template_id_44b9feaa___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_SaveData_vue_vue_type_template_id_c26d2e4e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./SaveData.vue?vue&type=template&id=c26d2e4e& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/DataEntry/SaveData.vue?vue&type=template&id=c26d2e4e&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_SaveData_vue_vue_type_template_id_c26d2e4e___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_IndicatorList_vue_vue_type_template_id_44b9feaa___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_SaveData_vue_vue_type_template_id_c26d2e4e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
@@ -46309,6 +46892,12 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 var state = {
   years: [],
   markets: [],
@@ -46320,7 +46909,8 @@ var state = {
   priceId: null,
   updatedPrice: null,
   refresh: false,
-  loadState: 0
+  loadState: 0,
+  marketUpdates: []
 };
 var mutations = {
   //Mutate market Type
@@ -46350,6 +46940,31 @@ var mutations = {
   },
   refreshPage: function refreshPage(state, refresh) {
     state.refresh = refresh; //console.log(state.refresh)
+  },
+  marketUpdatesMutation: function marketUpdatesMutation(state, priceObject) {
+    //First check if object exists
+    var marketUpdateObject;
+
+    var _iterator = _createForOfIteratorHelper(state.marketUpdates),
+        _step;
+
+    try {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
+        marketUpdateObject = _step.value;
+
+        if (marketUpdateObject.price_id === priceObject.price_id) {
+          var index = state.marketUpdates.indexOf(marketUpdateObject); //Remove existing market data object
+
+          state.marketUpdates.splice(index);
+        }
+      }
+    } catch (err) {
+      _iterator.e(err);
+    } finally {
+      _iterator.f();
+    }
+
+    state.marketUpdates.push(priceObject);
   }
 };
 var actions = {
@@ -46390,14 +47005,20 @@ var actions = {
       root: true
     });
     axios.post('./api/update_data', {
-      price_id: state.priceId,
-      price: state.updatedPrice
+      "market_data": JSON.stringify(state.marketUpdates)
     }).then(function (response) {
       commit('utils/loadingStateMutation', false, {
         root: true
-      });
-      console.log(response.data); //alert(response.data['message'])
+      }); //console.log(response.data);
+
+      alert(response.data);
     });
+    /*
+      let priceObject
+      for(priceObject of state.marketUpdates){
+          console.log("ID: " + priceObject.price_id + "Price: " + priceObject.price)
+      }
+      */
   }
 };
 var getters = {
@@ -46433,6 +47054,12 @@ var getters = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 var state = {
   years: [],
   markets: [],
@@ -46441,12 +47068,11 @@ var state = {
   month_id: null,
   year_name: null,
   indicator_id: null,
-  supply_id: '3',
-  //Default to normal supply
   marketId: null,
   marketTypeId: null,
   price: null,
-  refresh: false
+  refresh: false,
+  marketData: []
 };
 var mutations = {
   //Mutate market Type
@@ -46477,11 +47103,58 @@ var mutations = {
   priceMutation: function priceMutation(state, price) {
     state.price = price;
   },
-  supplyIdMutation: function supplyIdMutation(state, supply_id) {
-    state.supply_id = supply_id;
-  },
   refreshPage: function refreshPage(state, refresh) {
     state.refresh = refresh; //console.log(state.refresh)
+  },
+  marketDataMutation: function marketDataMutation(state, marketData) {
+    state.marketData = marketData;
+  },
+  updateMarketDataMutation: function updateMarketDataMutation(state, priceObject) {
+    //First check if object exists
+    var currentObject;
+
+    var _iterator = _createForOfIteratorHelper(state.marketData),
+        _step;
+
+    try {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
+        currentObject = _step.value;
+
+        if (currentObject.week_id === priceObject.week_id && currentObject.month_id === priceObject.month_id && currentObject.year_name === priceObject.year_name && currentObject.market_id === priceObject.market_id && currentObject.indicator_id === priceObject.indicator_id) {
+          var index = state.marketData.indexOf(currentObject); //Remove existing market data object
+
+          state.marketData.splice(index);
+        }
+      }
+    } catch (err) {
+      _iterator.e(err);
+    } finally {
+      _iterator.f();
+    }
+
+    state.marketData.push(priceObject);
+  },
+  updateSupplyIdMutation: function updateSupplyIdMutation(state, supplyObject) {
+    var indicator_id = supplyObject['indicator_id'];
+    var supply_id = supplyObject['supply_id'];
+    var currentObject;
+
+    var _iterator2 = _createForOfIteratorHelper(state.marketData),
+        _step2;
+
+    try {
+      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+        currentObject = _step2.value;
+
+        if (currentObject.indicator_id === indicator_id) {
+          currentObject.supply_id = supply_id;
+        }
+      }
+    } catch (err) {
+      _iterator2.e(err);
+    } finally {
+      _iterator2.f();
+    }
   }
 };
 var actions = {
@@ -46522,35 +47195,12 @@ var actions = {
       root: true
     });
     axios.post('./api/save_data', {
-      year_name: state.year_name,
-      month_id: state.month_id,
-      week: state.week_id,
-      market_id: state.marketId,
-      indicator_id: state.indicator_id,
-      price: state.price,
-      supply_id: state.supply_id
+      "market_data": JSON.stringify(state.marketData)
     }).then(function (response) {
       commit('utils/loadingStateMutation', false, {
         root: true
       });
-      console.log(response.data);
-    });
-  },
-  updateSupplyId: function updateSupplyId(_ref4) {
-    var commit = _ref4.commit;
-    commit('utils/loadingStateMutation', true, {
-      root: true
-    });
-    axios.post('./api/supply_update', {
-      year_name: state.year_name,
-      month_id: state.month_id,
-      market_id: state.marketId,
-      indicator_id: state.indicator_id,
-      supply_id: state.supply_id
-    }).then(function (response) {
-      commit('utils/loadingStateMutation', false, {
-        root: true
-      });
+      alert(response.data);
       console.log(response.data);
     });
   }
@@ -46567,6 +47217,9 @@ var getters = {
   },
   getMarketTypeId: function getMarketTypeId(state) {
     return state.marketTypeId;
+  },
+  getSupplyObject: function getSupplyObject(state) {
+    return state.supplyObject;
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -47022,7 +47675,7 @@ var actions = {
       commit('utils/loadingStateMutation', false, {
         root: true
       });
-      commit('marketDataMutation', response.data);
+      commit('marketDataMutation', response.data); //console.log(response.data)
     });
   }
 };
@@ -47138,6 +47791,28 @@ var mutations = {
     }
 
     state.marketData.push(priceObject);
+  },
+  updateSupplyIdMutation: function updateSupplyIdMutation(state, supplyObject) {
+    var indicator_id = supplyObject['indicator_id'];
+    var supply_id = supplyObject['supply_id'];
+    var currentObject;
+
+    var _iterator2 = _createForOfIteratorHelper(state.marketData),
+        _step2;
+
+    try {
+      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+        currentObject = _step2.value;
+
+        if (currentObject.indicator_id === indicator_id) {
+          currentObject.supply_id = supply_id;
+        }
+      }
+    } catch (err) {
+      _iterator2.e(err);
+    } finally {
+      _iterator2.f();
+    }
   }
 };
 var actions = {
@@ -47180,7 +47855,7 @@ var actions = {
 
     if (state.marketData.length > 0) {
       try {
-        axios.post('./api/save_weekly', {
+        axios.post('./api/save_data', {
           "market_data": JSON.stringify(state.marketData)
         }).then(function (response) {
           commit('utils/loadingStateMutation', false, {

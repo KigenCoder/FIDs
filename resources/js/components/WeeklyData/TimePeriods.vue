@@ -99,9 +99,14 @@ export default {
   methods: {
 
     weekSelected: function (){
+      //reset data
+      this.$store.commit('weekly_data_entry/marketDataMutation', [])
+      this.$store.commit('weekly_data_entry/marketIndicatorsMutation',[])
+
       //Commit to the store the current week ID
       this.$store.commit('weekly_data_entry/weekIdMutation', this.week_id)
-      this.$store.commit('weekly_data_entry/refreshPageMutation', true)
+
+
 
       let marketId = this.$store.getters['weekly_data_entry/getMarketId']
       let yearName = this.$store.getters['weekly_data_entry/getYearName']
@@ -113,9 +118,13 @@ export default {
 
     },
     monthSelected: function () {
+      //reset data
+      this.$store.commit('weekly_data_entry/marketDataMutation', [])
+      this.$store.commit('weekly_data_entry/marketIndicatorsMutation',[])
+
       //Commit to the store the current month ID
       this.$store.commit('weekly_data_entry/monthIdMutation', this.month_id)
-      this.$store.commit('weekly_data_entry/refreshPageMutation', true)
+
 
       let marketId = this.$store.getters['weekly_data_entry/getMarketId']
       let yearName = this.$store.getters['weekly_data_entry/getYearName']
@@ -127,9 +136,12 @@ export default {
 
     },
     yearSelected: function () {
-      this.$store.commit('weekly_data_entry/yearNameMutation', this.year_name)
-      this.$store.commit('weekly_data_entry/refreshPageMutation', true)
+      //reset data
+      this.$store.commit('weekly_data_entry/marketDataMutation', [])
+      this.$store.commit('weekly_data_entry/marketIndicatorsMutation',[])
 
+      //Set year
+      this.$store.commit('weekly_data_entry/yearNameMutation', this.year_name)
 
       let marketId = this.$store.getters['weekly_data_entry/getMarketId']
       let monthId = this.$store.getters['weekly_data_entry/getMonthId']

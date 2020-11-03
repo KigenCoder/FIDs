@@ -44,6 +44,8 @@
           case  'data_cleaning/marketDataMutation':
             if (state.data_cleaning.market_data.length > 0) {
               this.showTable = true
+            }else{
+              this.showTable = false
             }
             break;
           case 'data_cleaning/refreshPage':

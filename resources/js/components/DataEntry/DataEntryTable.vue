@@ -10,11 +10,11 @@
       <th>WEEK 5</th>
       <th>SUPPLY</th>
       <tbody>
-      <indicator_list
+      <data_entry_rows
           v-for="(indicatorListItem, index) in marketIndicators"
           :list_item="indicatorListItem"
           v-bind:key="index">
-      </indicator_list>
+      </data_entry_rows>
       </tbody>
     </table>
   </div>
@@ -24,12 +24,12 @@
 
 <script>
   import {mapState} from 'vuex';
-  import indicator_list from "./IndicatorList.vue"
+  import data_entry_rows from "./DataEntryRow.vue"
 
   export default {
     name: "DataTable",
     components: {
-      indicator_list,
+      data_entry_rows,
 
     },
 

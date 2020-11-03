@@ -47,7 +47,8 @@ Vue.component('weekly_entry_table', require('./components/WeeklyData/DataEntryTa
 Vue.component('weekly_indicators', require('./components/WeeklyData/DataEntryRow.vue').default);
 
 
-
+Vue.component('save_monthly_data', require('./components/DataEntry/SaveData.vue').default);
+Vue.component('btn_update_data', require('./components/DataCleaning/UpdateData.vue').default);
 
 
 var app = new Vue({

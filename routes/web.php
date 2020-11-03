@@ -10,8 +10,8 @@ Route::get("monthly-analysis", "MarketAnalysis@monthly_analysis");
 Route::get("tot", "ToTController@tot");
 Route::get('weekly-data', "WeeklyData@weekly_data");
 Route::get('weekly-data-entry', "WeeklyData@data_entry");
-Route::get("scratch-pad", "DataEntry@savedPrice");
 Route::resource('export', 'ExportsController');
+Route::resource('analyst', 'UserAnalystController');
 
 
 
