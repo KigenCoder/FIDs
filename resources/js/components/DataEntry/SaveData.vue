@@ -22,27 +22,43 @@ export default {
   methods: {
 
     saveMonthlyData: function () {
-      this.$store.dispatch("data_entry/saveData")
+      let marketTypeId = this.$store.getters['data_entry/getMarketTypeId']
+
+      if (marketTypeId === 3) {
+        this.$store.dispatch("data_entry/saveSlims")
+      } else {
+        this.$store.dispatch("data_entry/saveData")
+      }
 
     },
   },
   mounted() {
     this.$store.subscribe((mutation, state) => {
 
+      let marketDataSize = state.data_entry.marketData.length
+
       switch (mutation.type) {
         case 'data_entry/marketDataMutation':
-          let marketDataSize =  state.data_entry.marketData.length
-
           if (marketDataSize > 0) {
             this.showComponent = true
-          }else{
-            this.showComponent = false
+
           }
           break
 
         case 'data_entry/updateMarketDataMutation':
-          this.showComponent = true
+          if (marketDataSize > 0) {
+            this.showComponent = true
+
+          }
           break
+
+        case 'data_entry/updateSlimDataMutation':
+          if (marketDataSize > 0) {
+            this.showComponent = true
+
+          }
+          break
+
 
       }
     })

@@ -29,6 +29,8 @@ Route::post('cleaning_data', 'DataApiController@market_data');
 Route::post('update_data', 'DataApiController@updateData');
 Route::post('market_indicators', 'DataApiController@market_indicators');
 Route::post('save_data', 'DataApiController@save_data');
+Route::post('save_slims_data', 'DataApiController@save_slims_data');
+Route::post('save_slims', 'DataApiController@save_slims');
 Route::post('supply_update', 'DataApiController@supply_update');
 Route::post("save_weekly", "DataApiController@save_weekly");
 

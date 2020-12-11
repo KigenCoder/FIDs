@@ -11,6 +11,7 @@ const state = {
     price: null,
     refresh: false,
     marketData: [],
+    comments:{},
 }
 
 const mutations = {
@@ -56,6 +57,8 @@ const mutations = {
         state.marketData = marketData
     },
 
+
+
     updateMarketDataMutation(state, priceObject) {
         //First check if object exists
         let currentObject
@@ -70,12 +73,40 @@ const mutations = {
 
                 const index = state.marketData.indexOf(currentObject)
                 //Remove existing market data object
-                state.marketData.splice(index)
+                state.marketData.splice(index,1)
             }
         }
 
         state.marketData.push(priceObject)
+
+
     },
+
+    createSlimDataMutation(state, priceObject){
+
+    },
+
+    updateSlimDataMutation(state, priceObject) {
+        let currentObject
+
+        for (currentObject of state.marketData) {
+
+            if (currentObject.indicator_id === priceObject.indicator_id) {
+
+                const index = state.marketData.indexOf(currentObject)
+
+                //Remove existing market data object
+                state.marketData.splice(index,1)
+            }
+
+        }
+
+        state.marketData.push(priceObject)
+
+    },
+
+
+
 
     updateSupplyIdMutation(state, supplyObject) {
         let indicator_id = supplyObject['indicator_id']
@@ -88,6 +119,9 @@ const mutations = {
         }
     },
 
+    commentsMutation(state, comments){
+      state.comments = comments
+    },
 }
 const actions = {
     loadMarkets({commit}) {
@@ -132,7 +166,21 @@ const actions = {
                 console.log(response.data);
             })
 
+    },
 
+    saveSlims({commit}) {
+
+        commit('utils/loadingStateMutation', true, {root: true})
+        axios
+            .post('./api/save_slims_data', {
+                "market_data": JSON.stringify(state.marketData),
+                "comments" : JSON.stringify(state.comments)
+            })
+            .then(response => {
+                commit('utils/loadingStateMutation', false, {root: true})
+                alert(response.data)
+                console.log(response.data);
+            })
     },
 
 
@@ -142,7 +190,8 @@ const getters = {
     getYearName: state => state.year_name,
     getMarketId: state => state.marketId,
     getMarketTypeId: state => state.marketTypeId,
-    getSupplyObject: state => state.supplyObject,
+    getComments: state => state.comments,
+    getMarketData: state => state.marketData,
 }
 
 export default {
@@ -152,3 +201,4 @@ export default {
     mutations,
     getters,
 }
+

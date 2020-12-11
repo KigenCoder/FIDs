@@ -13,6 +13,8 @@ Route::get('weekly-data-entry', "WeeklyData@data_entry");
 Route::resource('export', 'ExportsController');
 Route::resource('analyst', 'UserAnalystController');
 
+//Route::get('dedup', 'ScratchPadController@dedup_market_data');
+
 
 
 

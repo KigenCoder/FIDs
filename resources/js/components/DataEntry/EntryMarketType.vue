@@ -28,14 +28,12 @@
 
     methods: {
       typeSelected: function () {
-
+        //Reset data
+        //this.store.commit('data_entry/marketsMutation',[])
+        this.$store.commit('data_entry/marketIndicatorsMutation', [])
         this.$store.commit('data_entry/marketTypeIdMutation', this.marketTypeId)
         //Fetch markets
         this.$store.dispatch('data_entry/loadMarkets');
-
-
-        //Reset data
-        this.$store.commit('data_entry/marketIndicatorsMutation', [])
       },
     }
   }

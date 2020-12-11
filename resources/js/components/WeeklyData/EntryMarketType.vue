@@ -20,7 +20,6 @@
         marketTypes: [
           {"id": 1, "type": "Main Market"},
           {"id": 2, "type": "SLIMS I"},
-          {"id": 3, "type": "SLIMS II"},
         ],
         marketTypeId: '',
       }

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Classes\IndicatorDataset;
 use App\Classes\IndicatorList;
 use App\MarketData;
+use App\SlimsPart2Details;
+use App\SlimsPart2Comments;
 use Illuminate\Http\Request;
 use DB;
 
@@ -266,6 +268,84 @@ class DataApiController extends Controller
     }
 
 
+    public function save_slims_data(Request $request)
+    {
+        $marketData = json_decode($request->all()["market_data"]);
+        $comments = json_decode($request->all()["comments"]);
+
+        $savedRecords = 0;
+        $existingRecords = 0;
+
+
+        for ($i = 0; $i < count($marketData); $i++) {
+            $priceObject = $marketData[$i];
+            $data['market_id'] = $priceObject->market_id;
+            $data['year_name'] = $priceObject->year_name;
+            $data['month_id'] = $priceObject->month_id;
+            $data['week'] = $priceObject->week_id;
+            $data['indicator_id'] = $priceObject->indicator_id;
+            $data['price'] = $priceObject->price;
+            $data['supply_id'] = $priceObject->supply_id;
+
+            //Check for saved data
+            $savedPrice = $this->savedPrice($data);
+
+            if (!$savedPrice) {
+                //MarketData::create($data); //Price does not exist so save it
+                $savedRecords++;
+            } else {
+                $existingRecords++; //Price exists so notify user
+            }
+
+            $slimData = array();
+
+            if (!$this->emptyString($priceObject->location_name)) {
+                $slimData['location_name'] = $priceObject->location_name;
+            }
+
+            if (!$this->emptyString($priceObject->key_informant)) {
+                $slimData['key_informant'] = $priceObject->key_informant;
+            }
+
+            if (!$this->emptyString($priceObject->triangulation)) {
+                $slimData['triangulation'] = $priceObject->triangulation;
+            }
+
+            if (!$this->emptyString($priceObject->data_trust_level)) {
+                $slimData['data_trust_level'] = $priceObject->data_trust_level;
+            }
+
+            if (count($slimData) > 0) {
+                //Save data
+                $slimData['year'] = $priceObject->year_name;
+                $slimData['month_id'] = $priceObject->month_id;
+                $slimData['market_id'] = $priceObject->market_id;
+                $slimData['indicator_id'] = $priceObject->indicator_id;
+                SlimsPart2Details::create($slimData);
+            }
+
+        }
+
+        if (!$this->emptyString($comments->comments)) {
+
+            $commentsData['year_name'] = $comments->year_name;
+            $commentsData['month_id'] = $comments->month_id;
+            $commentsData['market_id'] = $comments->market_id;
+            $commentsData['comments'] = $comments->comments;
+            SlimsPart2Comments::create($commentsData);
+
+        }
+
+        return json_encode("Saved: $savedRecords Existing: $existingRecords");
+
+    }
+
+    public function save_slims(Request $request)
+    {
+
+    }
+
+
     public function supply_update(Request $request)
     {
         $response = null;
@@ -342,6 +422,15 @@ class DataApiController extends Controller
         $query .= "AND week = $week ";
         return DB::select(DB::raw($query));
 
+    }
+
+    function emptyString($stringVar): bool
+    {
+        if (strcasecmp("", $stringVar) == 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 

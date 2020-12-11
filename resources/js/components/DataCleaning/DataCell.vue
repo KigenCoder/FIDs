@@ -1,7 +1,7 @@
 <template>
   <div class="container">
-
-    <input type="number" v-if="showFirstTextBox" v-model="weeklyPrice" @blur="updatePrice">
+    <input type="number" v-if="showFirstTextBox" v-model="weeklyPrice">
+    <input type="text" v-if="showSecondTextBox" v-model="weeklyPrice" @focus="onFocusText">
 
   </div>
 </template>
@@ -20,6 +20,7 @@ export default {
     return {
       newPrice: '',
       marketData: {},
+      visible: true
     }
   },
 
@@ -27,7 +28,9 @@ export default {
     showFirstTextBox: {
       get: function () {
         try {
-          if (this.type === 'indicator' && this.weeklyPrice > 0) {
+          let priceAmount = parseInt(this.marketData.price)
+
+          if (this.type === 'indicator' && priceAmount > 0 && this.visible === false) {
             return true
           } else {
             return false
@@ -41,16 +44,25 @@ export default {
     showSecondTextBox: {
       get: function () {
         try {
-          if (this.type === 'indicator' && this.weeklyPrice > 0) {
+          let priceAmount = parseInt(this.weeklyPrice)
+          if (this.type === 'indicator' && priceAmount > 0 && this.visible === true) {
             return true
           } else {
             return false
           }
         } catch (error) {
-          console.log("Show First TextBox: " + error)
+          console.log("Show Second TextBox: " + error)
         }
 
       },
+    },
+
+    marketData:{
+      get: function () {
+    },
+      set function (newPrice){
+        this.marketData .price = newPrice
+      }
     },
 
 
@@ -74,11 +86,12 @@ export default {
             console.log(error)
           }
         }
-        return priceAmount
+        //console.log("Thousand separator: " + this.thousandSeparator(priceAmount))
+        return this.thousandSeparator(priceAmount)
 
       },
       set: function (newWeeklyPrice) {
-        this.marketData.price = newWeeklyPrice
+        this.weeklyPrice = newWeeklyPrice
       }
     }
   },
@@ -92,15 +105,25 @@ export default {
       this.$store.commit('data_cleaning/marketUpdatesMutation', this.marketData)
     },
 
+
     onFocusText() {
-      this.visible = true;
-      this.weeklyPrice = this.temp;
+      try {
+        this.visible = false;
+        this.weeklyPrice = parseInt(this.weeklyPrice )
+        console.log("Weekly price: " + typeof this.weeklyPrice)
+        console.log("MarketData.Price: " + typeof this.marketData.price)
+      } catch (error) {
+        console.log("On Focus Error: " + error)
+      }
+
     },
 
     thousandSeparator(amount) {
       if (amount !== '' || amount !== undefined || amount !== 0 || amount !== '0' || amount !== null) {
         return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
       } else {
+        //console.log("Else called: " + (typeof amount))
         return amount;
       }
     },

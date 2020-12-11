@@ -31,6 +31,9 @@ Vue.component('entry_market_type', require('./components/DataEntry/EntryMarketTy
 Vue.component('data_entry_markets', require('./components/DataEntry/DataEntryMarkets.vue').default);
 Vue.component('entry_month_years', require('./components/DataEntry/EntryMonthYears.vue').default);
 Vue.component('data_entry_table', require('./components/DataEntry/DataEntryTable.vue').default);
+
+Vue.component('slims_entry_table', require('./components/DataEntry/SlimsEntryTable.vue').default);
+
 Vue.component('spinner',require('./components/utils/Spinner.vue').default);
 
 Vue.component('weekly_market_types', require('./components/WeeklyData/MarketType.vue').default);

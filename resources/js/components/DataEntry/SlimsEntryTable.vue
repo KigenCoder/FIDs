@@ -3,18 +3,27 @@
     <spinner></spinner>
     <table v-if="showTable" class="table is-bordered is-hoverable is-fullwidth small-font is-size-7">
       <th>INDICATOR</th>
-      <th>WEEK 1</th>
-      <th>WEEK 2</th>
-      <th>WEEK 3</th>
-      <th>WEEK 4</th>
-      <th>WEEK 5</th>
-      <th>SUPPLY</th>
+      <th>Monthly</th>
+      <th>Location</th>
+      <th>Key Informant</th>
+      <th>Triangulation</th>
+      <th>Data Trust level</th>
+
       <tbody>
-      <data_entry_rows
+      <slims_entry_rows
           v-for="(indicatorListItem, index) in marketIndicators"
           :list_item="indicatorListItem"
           v-bind:key="index">
-      </data_entry_rows>
+      </slims_entry_rows>
+      <tr>
+        <td>Comments</td>
+        <td>
+          <input type="text" v-model="comments" @blur="saveComments">
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
       </tbody>
     </table>
   </div>
@@ -24,12 +33,12 @@
 
 <script>
 import {mapState} from 'vuex';
-import data_entry_rows from "./DataEntryRow.vue"
+import slims_entry_rows from "./SlimsEntryRow.vue"
 
 export default {
-  name: "DataTable",
+  name: "SlimsDataTable",
   components: {
-    data_entry_rows,
+    slims_entry_rows,
 
   },
 
@@ -37,6 +46,7 @@ export default {
     return {
       componentKey: 0,
       showTable: false,
+      comments: '',
     }
   },
 
@@ -64,19 +74,18 @@ export default {
 
         case 'data_entry/marketIndicatorsMutation':
 
-          if (marketIndicatorsSize > 0 && state.data_entry.marketTypeId !== 3) {
+          if (marketIndicatorsSize > 0 && state.data_entry.marketTypeId === 3) {
             this.showTable = true
           }
           break
 
 
         case 'data_entry/marketTypeIdMutation':
-          if (state.data_entry.marketTypeId === 3) {
+          if (state.data_entry.marketTypeId !== 3) {
             this.showTable = false //Hide for SLIMS II
           }
 
-          if ((state.data_entry.marketTypeId === 1 || state.data_entry.marketTypeId === 2)
-              && marketIndicatorsSize > 0) {
+          if (state.data_entry.marketTypeId === 3 && marketIndicatorsSize > 0) {
             this.showTable = true
           }
 
@@ -87,6 +96,20 @@ export default {
     forceRerender() {
       this.componentKey += 1;
       this.$store.commit('data_entry/refreshPage', false)
+    },
+
+    saveComments() {
+      let year_name = this.$store.getters['data_entry/getYearName']
+      let month_id = this.$store.getters['data_entry/getMonthId']
+      let market_id = this.$store.getters['data_entry/getMarketId']
+
+      let commentsObject = {
+        year_name: year_name,
+        month_id: month_id,
+        comments: this.comments,
+        market_id: market_id,
+      }
+      this.$store.commit('data_entry/commentsMutation', commentsObject)
     }
   }
 }

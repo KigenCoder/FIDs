@@ -62,7 +62,7 @@ const mutations = {
 
                 const index = state.marketUpdates.indexOf(marketUpdateObject)
                 //Remove existing market data object
-                state.marketUpdates.splice(index)
+                state.marketUpdates.splice(index, 1)
             }
         }
 

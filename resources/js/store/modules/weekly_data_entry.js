@@ -71,7 +71,7 @@ const mutations = {
 
                 const index = state.marketData.indexOf(currentObject)
                 //Remove existing market data object
-                state.marketData.splice(index)
+                state.marketData.splice(index, 1)
             }
         }
 
@@ -135,8 +135,8 @@ const actions = {
                     })
                     .then(response => {
                         commit('utils/loadingStateMutation', false, {root: true})
-                        alert("Saved: " + response.data.saved + " Existing:  " + response.data.existing)
-                        //console.log(response.data);
+                        alert(response.data)
+                        console.log(response.data);
                     })
 
 
