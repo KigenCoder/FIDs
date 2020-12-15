@@ -95,7 +95,7 @@ const actions = {
             .then(response => {
                 commit('utils/loadingStateMutation', false, {root: true})
                 commit('marketDataMutation', response.data)
-                //console.log(state.market_data)
+
             })
     },
 
@@ -113,13 +113,13 @@ const actions = {
                 alert(response.data)
             })
 
-        /*
-          let priceObject
-          for(priceObject of state.marketUpdates){
-              console.log("ID: " + priceObject.price_id + "Price: " + priceObject.price)
-          }
 
-         */
+          // let priceObject
+          // for(priceObject of state.marketUpdates){
+          //     console.log("ID: " + priceObject.price_id + "Price: " + priceObject.price)
+          // }
+
+
     }
 
 

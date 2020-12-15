@@ -228,7 +228,7 @@ class DataApiController extends Controller
 
         $message = "Updated: $updated, Deleted: $deleted ";
 
-        return json_encode(["response" => $message]);
+        return json_encode($message);
 
     }
 

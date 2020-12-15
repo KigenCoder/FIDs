@@ -33,6 +33,8 @@ export default {
         case 'data_cleaning/marketUpdatesMutation':
           let marketDataSize =  state.data_cleaning.marketUpdates.length
 
+            //console.log(state.data_cleaning.marketUpdates)
+
           if (marketDataSize > 0) {
             this.showComponent = true
           }else{

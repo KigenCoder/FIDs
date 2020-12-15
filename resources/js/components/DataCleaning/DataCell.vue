@@ -1,11 +1,11 @@
 <template>
   <div class="container">
-    <input type="number" v-if="showFirstTextBox" v-model="weeklyPrice">
-    <input type="text" v-if="showSecondTextBox" v-model="weeklyPrice" @focus="onFocusText">
+    <input type="number" v-if="type==='indicator' && this.weeklyPrice >0 " v-model="weeklyPrice" @blur="updatePrice">
+    <!-- <input type="text" v-if="showSecondTextBox" v-model="weeklyPrice" @focus="onFocusText"> -->
 
   </div>
-</template>
 
+</template>
 
 <script>
 export default {
@@ -19,51 +19,46 @@ export default {
   data() {
     return {
       newPrice: '',
-      marketData: {},
-      visible: true
+      dataObject: {},
+      visible: true,
     }
   },
 
   computed: {
-    showFirstTextBox: {
-      get: function () {
-        try {
-          let priceAmount = parseInt(this.marketData.price)
 
-          if (this.type === 'indicator' && priceAmount > 0 && this.visible === false) {
-            return true
-          } else {
-            return false
-          }
-        } catch (error) {
-          console.log("Show First TextBox: " + error)
-        }
-      },
-    },
 
-    showSecondTextBox: {
-      get: function () {
-        try {
-          let priceAmount = parseInt(this.weeklyPrice)
-          if (this.type === 'indicator' && priceAmount > 0 && this.visible === true) {
-            return true
-          } else {
-            return false
-          }
-        } catch (error) {
-          console.log("Show Second TextBox: " + error)
-        }
 
-      },
-    },
-
-    marketData:{
-      get: function () {
-    },
-      set function (newPrice){
-        this.marketData .price = newPrice
-      }
-    },
+    // showFirstTextBox: {
+    //   get: function () {
+    //     try {
+    //       let priceAmount = parseInt(this.dataObject.price)
+    //
+    //       if (this.type === 'indicator' && priceAmount > 0 && this.visible === false) {
+    //         return true
+    //       } else {
+    //         return false
+    //       }
+    //     } catch (error) {
+    //       console.log("Show First TextBox: " + error)
+    //     }
+    //   },
+    // },
+    //
+    // showSecondTextBox: {
+    //   get: function () {
+    //     try {
+    //       let priceAmount = parseInt(this.weeklyPrice)
+    //       if (this.type === 'indicator' && priceAmount > 0 && this.visible === true) {
+    //         return true
+    //       } else {
+    //         return false
+    //       }
+    //     } catch (error) {
+    //       console.log("Show Second TextBox: " + error)
+    //     }
+    //
+    //   },
+    // },
 
 
     weeklyPrice: {
@@ -76,24 +71,24 @@ export default {
             let price = parseInt(priceObject.price)
 
             if (week === this.currentIndex && price > 0) {
-              this.marketData = {
+              this.dataObject = {
                 "price_id": priceObject.id,
                 "price": price,
               }
               priceAmount = price
             }
           } catch (error) {
-            console.log(error)
+            //console.log(error)
           }
         }
-        //console.log("Thousand separator: " + this.thousandSeparator(priceAmount))
-        return this.thousandSeparator(priceAmount)
+        return priceAmount
 
       },
       set: function (newWeeklyPrice) {
-        this.weeklyPrice = newWeeklyPrice
+        this.dataObject.price = newWeeklyPrice
       }
-    }
+    },
+
   },
 
   mounted() {
@@ -102,16 +97,29 @@ export default {
 
   methods: {
     updatePrice: function () {
-      this.$store.commit('data_cleaning/marketUpdatesMutation', this.marketData)
+      try {
+        let dataObjectPrice = parseInt(this.dataObject.price)
+        let vModelPrice = parseInt(this.weeklyPrice)
+
+        if (dataObjectPrice !== vModelPrice) {
+          //Update price
+          this.$store.commit('data_cleaning/marketUpdatesMutation', this.dataObject)
+        }
+
+      } catch (e) {
+        console.log("Exception: ", e)
+      }
+
+
     },
 
 
     onFocusText() {
       try {
         this.visible = false;
-        this.weeklyPrice = parseInt(this.weeklyPrice )
-        console.log("Weekly price: " + typeof this.weeklyPrice)
-        console.log("MarketData.Price: " + typeof this.marketData.price)
+        this.weeklyPrice = parseInt(this.weeklyPrice)
+        //console.log("Weekly price: " + typeof this.weeklyPrice)
+        //console.log("MarketData.Price: " + typeof this.dataObject.price)
       } catch (error) {
         console.log("On Focus Error: " + error)
       }

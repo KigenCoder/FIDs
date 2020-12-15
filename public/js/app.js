@@ -1936,8 +1936,6 @@ module.exports = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
 function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
@@ -1959,49 +1957,42 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   data: function data() {
     return {
       newPrice: '',
-      marketData: {},
+      dataObject: {},
       visible: true
     };
   },
   computed: {
-    showFirstTextBox: {
-      get: function get() {
-        try {
-          var priceAmount = parseInt(this.marketData.price);
-
-          if (this.type === 'indicator' && priceAmount > 0 && this.visible === false) {
-            return true;
-          } else {
-            return false;
-          }
-        } catch (error) {
-          console.log("Show First TextBox: " + error);
-        }
-      }
-    },
-    showSecondTextBox: {
-      get: function get() {
-        try {
-          var priceAmount = parseInt(this.weeklyPrice);
-
-          if (this.type === 'indicator' && priceAmount > 0 && this.visible === true) {
-            return true;
-          } else {
-            return false;
-          }
-        } catch (error) {
-          console.log("Show Second TextBox: " + error);
-        }
-      }
-    },
-    marketData: {
-      get: function get() {},
-
-      set function(newPrice) {
-        this.marketData.price = newPrice;
-      }
-
-    },
+    // showFirstTextBox: {
+    //   get: function () {
+    //     try {
+    //       let priceAmount = parseInt(this.dataObject.price)
+    //
+    //       if (this.type === 'indicator' && priceAmount > 0 && this.visible === false) {
+    //         return true
+    //       } else {
+    //         return false
+    //       }
+    //     } catch (error) {
+    //       console.log("Show First TextBox: " + error)
+    //     }
+    //   },
+    // },
+    //
+    // showSecondTextBox: {
+    //   get: function () {
+    //     try {
+    //       let priceAmount = parseInt(this.weeklyPrice)
+    //       if (this.type === 'indicator' && priceAmount > 0 && this.visible === true) {
+    //         return true
+    //       } else {
+    //         return false
+    //       }
+    //     } catch (error) {
+    //       console.log("Show Second TextBox: " + error)
+    //     }
+    //
+    //   },
+    // },
     weeklyPrice: {
       get: function get() {
         var priceObject;
@@ -2019,41 +2010,48 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
               var price = parseInt(priceObject.price);
 
               if (week === this.currentIndex && price > 0) {
-                this.marketData = {
+                this.dataObject = {
                   "price_id": priceObject.id,
                   "price": price
                 };
                 priceAmount = price;
               }
-            } catch (error) {
-              console.log(error);
+            } catch (error) {//console.log(error)
             }
-          } //console.log("Thousand separator: " + this.thousandSeparator(priceAmount))
-
+          }
         } catch (err) {
           _iterator.e(err);
         } finally {
           _iterator.f();
         }
 
-        return this.thousandSeparator(priceAmount);
+        return priceAmount;
       },
       set: function set(newWeeklyPrice) {
-        this.weeklyPrice = newWeeklyPrice;
+        this.dataObject.price = newWeeklyPrice;
       }
     }
   },
   mounted: function mounted() {},
   methods: {
     updatePrice: function updatePrice() {
-      this.$store.commit('data_cleaning/marketUpdatesMutation', this.marketData);
+      try {
+        var dataObjectPrice = parseInt(this.dataObject.price);
+        var vModelPrice = parseInt(this.weeklyPrice);
+
+        if (dataObjectPrice !== vModelPrice) {
+          //Update price
+          this.$store.commit('data_cleaning/marketUpdatesMutation', this.dataObject);
+        }
+      } catch (e) {
+        console.log("Exception: ", e);
+      }
     },
     onFocusText: function onFocusText() {
       try {
         this.visible = false;
-        this.weeklyPrice = parseInt(this.weeklyPrice);
-        console.log("Weekly price: " + _typeof(this.weeklyPrice));
-        console.log("MarketData.Price: " + _typeof(this.marketData.price));
+        this.weeklyPrice = parseInt(this.weeklyPrice); //console.log("Weekly price: " + typeof this.weeklyPrice)
+        //console.log("MarketData.Price: " + typeof this.dataObject.price)
       } catch (error) {
         console.log("On Focus Error: " + error);
       }
@@ -2473,7 +2471,7 @@ __webpack_require__.r(__webpack_exports__);
     this.$store.subscribe(function (mutation, state) {
       switch (mutation.type) {
         case 'data_cleaning/marketUpdatesMutation':
-          var marketDataSize = state.data_cleaning.marketUpdates.length;
+          var marketDataSize = state.data_cleaning.marketUpdates.length; //console.log(state.data_cleaning.marketUpdates)
 
           if (marketDataSize > 0) {
             _this.showComponent = true;
@@ -4260,6 +4258,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         return amount;
       }
     }
+  },
+  mounted: function mounted() {
+    console.log(this.dataSet);
   }
 });
 
@@ -25534,7 +25535,7 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container" }, [
-    _vm.showFirstTextBox
+    _vm.type === "indicator" && this.weeklyPrice > 0
       ? _c("input", {
           directives: [
             {
@@ -25547,30 +25548,7 @@ var render = function() {
           attrs: { type: "number" },
           domProps: { value: _vm.weeklyPrice },
           on: {
-            input: function($event) {
-              if ($event.target.composing) {
-                return
-              }
-              _vm.weeklyPrice = $event.target.value
-            }
-          }
-        })
-      : _vm._e(),
-    _vm._v(" "),
-    _vm.showSecondTextBox
-      ? _c("input", {
-          directives: [
-            {
-              name: "model",
-              rawName: "v-model",
-              value: _vm.weeklyPrice,
-              expression: "weeklyPrice"
-            }
-          ],
-          attrs: { type: "text" },
-          domProps: { value: _vm.weeklyPrice },
-          on: {
-            focus: _vm.onFocusText,
+            blur: _vm.updatePrice,
             input: function($event) {
               if ($event.target.composing) {
                 return
@@ -48032,7 +48010,7 @@ var actions = {
       commit('utils/loadingStateMutation', false, {
         root: true
       });
-      commit('marketDataMutation', response.data); //console.log(state.market_data)
+      commit('marketDataMutation', response.data);
     });
   },
   updateData: function updateData(_ref3) {
@@ -48048,13 +48026,10 @@ var actions = {
       }); //console.log(response.data);
 
       alert(response.data);
-    });
-    /*
-      let priceObject
-      for(priceObject of state.marketUpdates){
-          console.log("ID: " + priceObject.price_id + "Price: " + priceObject.price)
-      }
-      */
+    }); // let priceObject
+    // for(priceObject of state.marketUpdates){
+    //     console.log("ID: " + priceObject.price_id + "Price: " + priceObject.price)
+    // }
   }
 };
 var getters = {

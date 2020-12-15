@@ -55,6 +55,10 @@
       }
     },
 
+    mounted() {
+    console.log(this.dataSet)
+    }
+
   }
 </script>
 
