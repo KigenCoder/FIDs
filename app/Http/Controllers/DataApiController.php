@@ -7,6 +7,7 @@ use App\Classes\IndicatorList;
 use App\MarketData;
 use App\SlimsPart2Details;
 use App\SlimsPart2Comments;
+use http\Message;
 use Illuminate\Http\Request;
 use DB;
 
@@ -291,7 +292,7 @@ class DataApiController extends Controller
             $savedPrice = $this->savedPrice($data);
 
             if (!$savedPrice) {
-                //MarketData::create($data); //Price does not exist so save it
+                MarketData::create($data); //Price does not exist so save it
                 $savedRecords++;
             } else {
                 $existingRecords++; //Price exists so notify user
@@ -321,7 +322,14 @@ class DataApiController extends Controller
                 $slimData['month_id'] = $priceObject->month_id;
                 $slimData['market_id'] = $priceObject->market_id;
                 $slimData['indicator_id'] = $priceObject->indicator_id;
-                SlimsPart2Details::create($slimData);
+                try {
+                    SlimsPart2Details::create($slimData);
+                } catch (\Exception $ex) {
+                    //return json_encode(["Exception" => $ex]);
+                }
+
+
+
             }
 
         }
@@ -332,7 +340,11 @@ class DataApiController extends Controller
             $commentsData['month_id'] = $comments->month_id;
             $commentsData['market_id'] = $comments->market_id;
             $commentsData['comments'] = $comments->comments;
-            SlimsPart2Comments::create($commentsData);
+            try {
+                SlimsPart2Comments::create($commentsData);
+            }catch (\Exception $ex){
+                //return json_encode(["Exception" => $ex]);
+            }
 
         }
 

@@ -11,6 +11,9 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.js('resources/js/app.js', 'public/js').sass('resources/sass/app.scss', 'public/css');
+//mix.js('resources/js/app.js', 'public/js').sass('resources/sass/app.scss', 'public/css');
+//mix.js('resources/js/app.js', 'public/js').vue();
+//mix.js('src/app.js', 'dist');
+mix.js('resources/js/app.js', 'public/js').vue();
 mix.copy('node_modules/bulma/css/bulma.css', 'public/css/styles/bulma.css');
 mix.copy('node_modules/bulma/css/bulma.min.css', 'public/css/styles/bulma.min.css');

@@ -169,7 +169,6 @@ const actions = {
     },
 
     saveSlims({commit}) {
-
         commit('utils/loadingStateMutation', true, {root: true})
         axios
             .post('./api/save_slims_data', {
@@ -181,6 +180,8 @@ const actions = {
                 alert(response.data)
                 console.log(response.data);
             })
+
+
     },
 
 
