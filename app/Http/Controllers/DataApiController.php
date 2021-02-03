@@ -291,19 +291,13 @@ class DataApiController extends Controller
             //Check for saved data
             $savedPrice = $this->savedPrice($data);
 
-
-            return $savedPrice;
-
             if (!$savedPrice) {
                 MarketData::create($data); //Price does not exist so save it
                 $savedRecords++;
             } else {
                 $existingRecords++; //Price exists so notify user
             }
-
-
-
-
+            
             //Save SLIMS Part II Details
             $slimData = array();
 
