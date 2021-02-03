@@ -291,6 +291,9 @@ class DataApiController extends Controller
             //Check for saved data
             $savedPrice = $this->savedPrice($data);
 
+
+            return $savedPrice;
+
             if (!$savedPrice) {
                 MarketData::create($data); //Price does not exist so save it
                 $savedRecords++;
@@ -298,6 +301,10 @@ class DataApiController extends Controller
                 $existingRecords++; //Price exists so notify user
             }
 
+
+
+
+            //Save SLIMS Part II Details
             $slimData = array();
 
             if (!$this->emptyString($priceObject->location_name)) {
@@ -325,27 +332,23 @@ class DataApiController extends Controller
                 try {
                     SlimsPart2Details::create($slimData);
                 } catch (\Exception $ex) {
-                    //return json_encode(["Exception" => $ex]);
+                    //return json_encode(["Exception" => $ex.getMessage()]);
                 }
 
-
-
             }
-
         }
-
-        if (!$this->emptyString($comments->comments)) {
-
-            $commentsData['year_name'] = $comments->year_name;
-            $commentsData['month_id'] = $comments->month_id;
-            $commentsData['market_id'] = $comments->market_id;
-            $commentsData['comments'] = $comments->comments;
-            try {
-                SlimsPart2Comments::create($commentsData);
+         //Save SLIMS Part II comments
+        if(!$this->emptyString($comments->comments)){
+            try{
+                $dataArray = array();
+                $dataArray['year_name'] = $comments->year_name;
+                $dataArray['month_id'] = $comments->month_id;
+                $dataArray['market_id'] = $comments->market_id;
+                $dataArray['comments'] = $comments->comments;
+                SlimsPart2Comments::create($dataArray);
             }catch (\Exception $ex){
-                //return json_encode(["Exception" => $ex]);
+                //return ["Exception: " => $ex.getMessage()];
             }
-
         }
 
         return json_encode("Saved: $savedRecords Existing: $existingRecords");

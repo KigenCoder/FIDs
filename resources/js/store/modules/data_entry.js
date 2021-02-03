@@ -173,7 +173,7 @@ const actions = {
         axios
             .post('./api/save_slims_data', {
                 "market_data": JSON.stringify(state.marketData),
-                "comments" : JSON.stringify(state.comments)
+                "comments" : JSON.stringify(state.comments),
             })
             .then(response => {
                 commit('utils/loadingStateMutation', false, {root: true})

@@ -5,7 +5,8 @@
     "watch": "mix watch",
     "watch-poll": "mix watch -- --watch-options-poll=1000",
     "hot": "mix watch --hot",
-    "production": "mix --production"
+    "production": "mix --production",
+    "__comment__": "Updated to larvel mix 6.0"
   },
   "devDependencies": {
     "axios": "^0.21.1",
