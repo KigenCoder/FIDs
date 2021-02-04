@@ -279,6 +279,8 @@ class DataApiController extends Controller
             $savedRecords = 0;
             $existingRecords = 0;
 
+            $saveComments= False;
+
             for ($i = 0; $i < count($marketData); $i++) {
                 $priceObject = $marketData[$i];
                 $data['market_id'] = $priceObject->market_id;
@@ -295,6 +297,7 @@ class DataApiController extends Controller
                 if (!$savedPrice) {
                     MarketData::create($data); //Price does not exist so save it
                     $savedRecords++;
+                    $saveComments= True;
                 } else {
                     $existingRecords++; //Price exists so notify user
                 }
@@ -318,7 +321,7 @@ class DataApiController extends Controller
                     $slimData['data_trust_level'] = $priceObject->data_trust_level;
                 }
 
-                if (count($slimData) > 0) {
+                if (count($slimData) > 0 && !$savedPrice) {
                     //Save data
                     $slimData['year'] = $priceObject->year_name;
                     $slimData['month_id'] = $priceObject->month_id;
@@ -333,7 +336,7 @@ class DataApiController extends Controller
                 }
             }
             //Save SLIMS Part II comments
-            if(!$this->emptyString($comments->comments)){
+            if(!$this->emptyString($comments->comments) && $saveComments){
                 try{
                     $dataArray = array();
                     $dataArray['year_name'] = $comments->year_name;
@@ -345,7 +348,7 @@ class DataApiController extends Controller
                     //return ["Exception: " => $ex.getMessage()];
                 }
             }
-            
+
 
             return json_encode("Saved: $savedRecords Existing: $existingRecords");
 
