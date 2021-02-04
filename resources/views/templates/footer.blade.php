@@ -21,7 +21,7 @@
 <script src="https://cdn.jsdelivr.net/npm/vee-validate@3.3.8/dist/vee-validate.min.js"></script>
 
 <!-- Vue Javascript file -->
-<script src="{{asset('js/app.js')}}"></script>
+<script src="{{asset('js/app.js')}}" defer></script>
 <script type="text/javascript" src="{{asset('js/modal-fx.min.js')}}"></script>
 
 

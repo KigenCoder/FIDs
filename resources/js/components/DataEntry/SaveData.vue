@@ -26,8 +26,10 @@ export default {
 
       if (marketTypeId === 3) {
         this.$store.dispatch("data_entry/saveSlims")
+
       } else {
         this.$store.dispatch("data_entry/saveData")
+
       }
 
     },
