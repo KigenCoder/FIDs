@@ -271,11 +271,8 @@ class DataApiController extends Controller
 
     public function save_slims_data(Request $request)
     {
-        if (isset($request->all()["market_data"])
-            && isset($request->all()["comments"])) {
             $marketData = json_decode($request->all()["market_data"]);
             $comments = json_decode($request->all()["comments"]);
-
             $savedRecords = 0;
             $existingRecords = 0;
 
@@ -298,8 +295,10 @@ class DataApiController extends Controller
                     MarketData::create($data); //Price does not exist so save it
                     $savedRecords++;
                     $saveComments= True;
+                    $saveDetails = True;
                 } else {
                     $existingRecords++; //Price exists so notify user
+                    $saveDetails = False;
                 }
 
                 //Save SLIMS Part II Details
@@ -321,7 +320,7 @@ class DataApiController extends Controller
                     $slimData['data_trust_level'] = $priceObject->data_trust_level;
                 }
 
-                if (count($slimData) > 0 && !$savedPrice) {
+                if (count($slimData) > 0 && $saveDetails==True) {
                     //Save data
                     $slimData['year'] = $priceObject->year_name;
                     $slimData['month_id'] = $priceObject->month_id;
@@ -330,13 +329,14 @@ class DataApiController extends Controller
                     try {
                         SlimsPart2Details::create($slimData);
                     } catch (\Exception $ex) {
-                        //return json_encode(["Exception" => $ex.getMessage()]);
+                        return json_encode(["Exception" => $ex.getMessage()]);
                     }
 
                 }
             }
+
             //Save SLIMS Part II comments
-            if(!$this->emptyString($comments->comments) && $saveComments){
+            if(!$this->emptyString($comments->comments) && $saveComments==True){
                 try{
                     $dataArray = array();
                     $dataArray['year_name'] = $comments->year_name;
@@ -349,16 +349,12 @@ class DataApiController extends Controller
                 }
             }
 
-
             return json_encode("Saved: $savedRecords Existing: $existingRecords");
 
-        }
-    }
-
-    public function save_slims(Request $request)
-    {
 
     }
+
+
 
 
     public function supply_update(Request $request)

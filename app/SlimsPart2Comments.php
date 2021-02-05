@@ -8,9 +8,7 @@ class SlimsPart2Comments extends Model
 {
     protected $table='slims_part2_comments';
 
-    public function usesTimestamps() : bool{
-        return false;
-    }
+    public $timestamps = false;
 
     protected $fillable=[
         'year_name',

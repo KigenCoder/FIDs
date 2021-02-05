@@ -180,10 +180,6 @@ const actions = {
                 alert(response.data)
                 console.log(response.data);
             })
-
-
-
-
     },
 
 

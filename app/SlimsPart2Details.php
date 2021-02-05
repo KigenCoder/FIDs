@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class SlimsPart2Details extends Model
 {
     protected $table = "slims_part2_details";
-    public function usesTimestamps() : bool{
-        return false;
-    }
+
+
+    public $timestamps = false;
 
     protected $fillable = [
         "year",
