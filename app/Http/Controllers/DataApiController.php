@@ -275,7 +275,6 @@ class DataApiController extends Controller
             $comments = json_decode($request->all()["comments"]);
             $savedRecords = 0;
             $existingRecords = 0;
-
             $saveComments= False;
 
             for ($i = 0; $i < count($marketData); $i++) {
@@ -291,13 +290,13 @@ class DataApiController extends Controller
                 //Check for saved data
                 $savedPrice = $this->savedPrice($data);
 
-                if (!$savedPrice) {
+                if (count($savedPrice)<1) {
                     MarketData::create($data); //Price does not exist so save it
-                    $savedRecords++;
-                    $saveComments= True;
+                    $savedRecords ++;
+                    $saveComments = True;
                     $saveDetails = True;
                 } else {
-                    $existingRecords++; //Price exists so notify user
+                    $existingRecords ++; //Price exists so notify user
                     $saveDetails = False;
                 }
 
@@ -329,14 +328,15 @@ class DataApiController extends Controller
                     try {
                         SlimsPart2Details::create($slimData);
                     } catch (\Exception $ex) {
-                        return json_encode(["Exception" => $ex.getMessage()]);
+                        //return json_encode(["Exception" => $ex.getMessage()]);
                     }
-
                 }
+
+
             }
 
             //Save SLIMS Part II comments
-            if(!$this->emptyString($comments->comments) && $saveComments==True){
+            if(isset($comments->comments) && $saveComments==True){
                 try{
                     $dataArray = array();
                     $dataArray['year_name'] = $comments->year_name;
